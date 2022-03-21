@@ -24,7 +24,7 @@ fun SetUpStatusBar(
             color = MaterialTheme.colors.primarySurface
         )
         systemUiController.setNavigationBarColor(
-            color = MaterialTheme.colors.surface
+            color = MaterialTheme.colors.primarySurface
         )
     } else {
         systemUiController.setStatusBarColor(

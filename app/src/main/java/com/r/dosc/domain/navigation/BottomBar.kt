@@ -91,7 +91,7 @@ private fun NavigationItemIcon(destination: BottomBarDestination, selected: Bool
                     text = destination.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colors.onPrimary,
+                    color = MaterialTheme.colors.onBackground,
 
                     )
                 Spacer(modifier = Modifier.height(2.dp))

@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.r.dosc.data.preference.PreferenceStorage
+import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val HOME_SCREEN = "Dosc"
+const val SETTINGS_SCREEN = "Settings"
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -27,7 +30,8 @@ class MainViewModel @Inject constructor(
     val isDarkThemeState = mutableStateOf(false)
     val isStartWithFileNameState = mutableStateOf(false)
     val isOpenDialogBox = mutableStateOf(false)
-
+    val scanningStart = mutableStateOf<Boolean?>(null)
+    val topAppBarTitle = mutableStateOf("Dosc")
     val lifecycleEvent = mutableStateOf(Lifecycle.Event.ON_ANY)
 
 
@@ -39,12 +43,19 @@ class MainViewModel @Inject constructor(
             delay(100L)
             _duration.value = false
 
-
         }
     }
 
     fun onEvent(events: MainScreenEvents) {
         when (events) {
+            is MainScreenEvents.TopAppBarTitle -> {
+                if (events.route == SettingsScreenDestination.route) {
+                    setTopAppBarTitle(SETTINGS_SCREEN)
+                } else {
+                    setTopAppBarTitle(HOME_SCREEN)
+                }
+            }
+
             is MainScreenEvents.ShowSnackBar -> {
                 setUiEvent(MainScreenEvents.ShowSnackBar(events.uiText))
             }
@@ -65,9 +76,17 @@ class MainViewModel @Inject constructor(
             is MainScreenEvents.LifecycleEvents -> {
                 setLifecycleEvent(events.lifecycleEvents)
             }
+
         }
     }
 
+    private fun setTopAppBarTitle(title: String) {
+        topAppBarTitle.value = title
+    }
+
+    fun scanningStart(start: Boolean?) {
+        scanningStart.value = start
+    }
 
     private fun setDialogBox(open: Boolean) {
         isOpenDialogBox.value = open

@@ -2,22 +2,16 @@ package com.r.dosc.presentation.main
 
 import android.Manifest
 import android.os.Bundle
-import android.view.animation.BounceInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
@@ -30,8 +24,6 @@ import com.r.dosc.domain.navigation.BottomBar
 import com.r.dosc.presentation.NavGraphs
 import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import com.r.dosc.domain.ui.theme.DoscTheme
-import com.r.dosc.R
-import com.r.dosc.domain.constants.Permissions
 import com.r.dosc.presentation.destinations.HomeScreenDestination
 import com.r.dosc.presentation.main.components.OpenDialogBox
 import com.r.dosc.presentation.main.components.SetupPermissions
@@ -40,6 +32,7 @@ import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
 import com.r.dosc.domain.components.SetUpStatusBar
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,20 +45,20 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            setKeepOnScreenCondition { viewModel.duration.value }
+            setKeepOnScreenCondition { mainViewModel.duration.value }
         }
         setContent {
             DoscTheme(
-                darkTheme = viewModel.isDarkThemeState.value
+                darkTheme = mainViewModel.isDarkThemeState.value
             ) {
                 val systemUiController = rememberSystemUiController()
                 val lifecycleOwner = LocalLifecycleOwner.current
-                SetUpStatusBar(systemUiController, lifecycleOwner, viewModel, false)
+                SetUpStatusBar(systemUiController, lifecycleOwner, mainViewModel, false)
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -82,9 +75,6 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
 
-                    var topBarTitle by rememberSaveable {
-                        mutableStateOf("Dosc")
-                    }
                     val topBarColor = animateColorAsState(
                         if (shouldShowBottomNavBarTopBarFloatBtn(navBackStackEntry)) {
                             MaterialTheme.colors.primarySurface
@@ -93,16 +83,9 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
-                    var startScanning by rememberSaveable {
-                        mutableStateOf(false)
-                    }
 
                     navController.addOnDestinationChangedListener(listener = { _, dest, _ ->
-                        topBarTitle = if (dest.route == SettingsScreenDestination.route) {
-                            "Settings"
-                        } else {
-                            "Dosc"
-                        }
+                        mainViewModel.onEvent(MainScreenEvents.TopAppBarTitle(dest.route))
 
                     })
 
@@ -116,7 +99,7 @@ class MainActivity : ComponentActivity() {
                                 TopAppBar(
                                     title = {
                                         Text(
-                                            text = topBarTitle,
+                                            text = mainViewModel.topAppBarTitle.value,
                                             fontSize = 30.sp,
                                             color = Color.White,
                                         )
@@ -145,10 +128,10 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 ScanningFloatingButton(
                                     permissionViewModel = permissionViewModel,
-                                    mainViewModel = viewModel,
+                                    mainViewModel = mainViewModel,
                                     cameraPermissionState = cameraPermissionState,
                                     onClick = {
-                                        startScanning = true
+                                        mainViewModel.scanningStart(true)
                                     }
                                 )
                             }
@@ -164,35 +147,36 @@ class MainActivity : ComponentActivity() {
                             dependenciesContainerBuilder = {
                                 if (destination is HomeScreenDestination) {
                                     dependency(permissionViewModel)
-                                    dependency(viewModel)
+                                    dependency(mainViewModel)
                                 }
                                 if (destination is SettingsScreenDestination) {
-                                    dependency(viewModel)
+                                    dependency(mainViewModel)
                                 }
+
                             }
                         )
                     }
 
-
-
-                    if (startScanning) {
+                    if (mainViewModel.scanningStart.value == true) {
                         systemUiController.setStatusBarColor(
                             color = Color.Black
                         )
                         navController.navigateTo(ScanningCameraScreenDestination) {
+                            popUpTo(HomeScreenDestination.route)
                             launchSingleTop = true
 
                         }
-                        startScanning = false
+                        mainViewModel.scanningStart(null)
+
                     }
 
 
-                    if (viewModel.isOpenDialogBox.value) {
-                        OpenDialogBox(viewModel)
+                    if (mainViewModel.isOpenDialogBox.value) {
+                        OpenDialogBox(mainViewModel)
                     }
 
                     LaunchedEffect(key1 = true) {
-                        viewModel.uiEvent.collect { event ->
+                        mainViewModel.uiEvent.collect { event ->
                             when (event) {
                                 is MainScreenEvents.ShowSnackBar -> {
                                     showSnackBar(

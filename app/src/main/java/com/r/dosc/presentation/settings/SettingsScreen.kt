@@ -109,7 +109,7 @@ fun RowSwitch(
             Text(
                 text = title,
                 fontSize = 21.sp,
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colors.onBackground,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 1.sp,
             )

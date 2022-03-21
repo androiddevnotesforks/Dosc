@@ -10,7 +10,9 @@ private val DarkColorPalette = darkColors(
     primary = Salem,
     primaryVariant = Dark_2,
     secondary = Ocean_Green,
-    onPrimary = TextWhite
+    onPrimary = Dark_1,
+
+
 
 )
 
