@@ -1,0 +1,97 @@
+package com.r.dosc.presentation.main
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.r.dosc.data.preference.PreferenceStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    var prefStorage: PreferenceStorage
+) : ViewModel() {
+
+    private val _duration = MutableStateFlow(true)
+    val duration = _duration.asStateFlow()
+
+    private val _uiEvent = Channel<MainScreenEvents>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    val isDarkThemeState = mutableStateOf(false)
+    val isStartWithFileNameState = mutableStateOf(false)
+    val isOpenDialogBox = mutableStateOf(false)
+
+    val lifecycleEvent = mutableStateOf(Lifecycle.Event.ON_ANY)
+
+
+    init {
+        viewModelScope.launch {
+            isDarkThemeState.value = prefStorage.isDarkTheme.first()
+            isStartWithFileNameState.value = prefStorage.isStartWithFileName.first()
+
+            delay(100L)
+            _duration.value = false
+
+
+        }
+    }
+
+    fun onEvent(events: MainScreenEvents) {
+        when (events) {
+            is MainScreenEvents.ShowSnackBar -> {
+                setUiEvent(MainScreenEvents.ShowSnackBar(events.uiText))
+            }
+            is MainScreenEvents.IsDarkTheme -> {
+                viewModelScope.launch {
+                    setDarkTheme(events.isDarkTheme)
+                }
+            }
+            is MainScreenEvents.IsStartWithFileName -> {
+                viewModelScope.launch {
+                    setStartWithFileName(events.isStartWithFileName)
+                }
+            }
+            is MainScreenEvents.OpenDialog -> {
+                setDialogBox(events.open)
+            }
+
+            is MainScreenEvents.LifecycleEvents -> {
+                setLifecycleEvent(events.lifecycleEvents)
+            }
+        }
+    }
+
+
+    private fun setDialogBox(open: Boolean) {
+        isOpenDialogBox.value = open
+    }
+
+    private fun setLifecycleEvent(lifecycleEvents: Lifecycle.Event) {
+        lifecycleEvent.value = lifecycleEvents
+    }
+
+    private fun setUiEvent(event: MainScreenEvents) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
+    }
+
+    private suspend fun setDarkTheme(isDarkTheme: Boolean) {
+        isDarkThemeState.value = isDarkTheme
+        prefStorage.setIsDarkTheme(isDarkTheme)
+    }
+
+
+    private suspend fun setStartWithFileName(isStartWithFileName: Boolean) {
+        isStartWithFileNameState.value = isStartWithFileName
+        prefStorage.setIsStartWithFileName(isStartWithFileName = isStartWithFileName)
+    }
+
+}
