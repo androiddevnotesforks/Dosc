@@ -30,6 +30,7 @@ import com.r.dosc.presentation.main.components.SetupPermissions
 import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
 import com.r.dosc.domain.components.SetUpStatusBar
+import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
@@ -131,6 +132,12 @@ class MainActivity : ComponentActivity() {
                                     mainViewModel = mainViewModel,
                                     cameraPermissionState = cameraPermissionState,
                                     onClick = {
+                                        systemUiController.setStatusBarColor(
+                                            color = DarkColorPalette.primarySurface
+                                        )
+                                        systemUiController.setNavigationBarColor(
+                                            color = DarkColorPalette.primarySurface
+                                        )
                                         mainViewModel.scanningStart(true)
                                     }
                                 )
@@ -158,12 +165,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (mainViewModel.scanningStart.value == true) {
-                        systemUiController.setStatusBarColor(
-                            color = Color.Black
-                        )
+
                         navController.navigateTo(ScanningCameraScreenDestination) {
-                            popUpTo(HomeScreenDestination.route)
                             launchSingleTop = true
+                            popUpTo(HomeScreenDestination.route)
+
 
                         }
                         mainViewModel.scanningStart(null)

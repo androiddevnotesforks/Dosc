@@ -1,8 +1,5 @@
 package com.r.dosc.presentation.scanning
 
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,10 +25,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
-import com.r.dosc.presentation.destinations.HomeScreenDestination
-import com.r.dosc.presentation.main.MainScreenEvents
-import com.r.dosc.presentation.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -48,17 +43,16 @@ fun ScanningCameraScreen(
     val context = LocalContext.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
 
-
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
             val observer = LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
                     systemUiController.setStatusBarColor(
-                        color = Color.Black
+                        color = DarkColorPalette.primarySurface
                     )
                     systemUiController.setNavigationBarColor(
-                        color = Color.Black
+                        color = DarkColorPalette.primarySurface
                     )
                 }
 
