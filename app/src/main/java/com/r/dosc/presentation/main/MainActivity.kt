@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -33,7 +34,6 @@ import com.r.dosc.domain.components.SetUpStatusBar
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             DoscTheme(
-                darkTheme = mainViewModel.isDarkThemeState.value
+                darkTheme = mainViewModel.isDarkThemeState.value || isSystemInDarkTheme()
             ) {
                 val systemUiController = rememberSystemUiController()
                 val lifecycleOwner = LocalLifecycleOwner.current

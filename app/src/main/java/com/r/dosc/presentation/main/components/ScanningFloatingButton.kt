@@ -1,5 +1,6 @@
 package com.r.dosc.presentation.main.components
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
@@ -73,9 +74,7 @@ fun ScanningFloatingButton(
         },
     ) {
         Icon(
-            modifier = Modifier
-                .size(28.dp, 40.dp),
-            painter = painterResource(id = R.drawable.ic_scanner),
+            painter = painterResource(id = R.drawable.ic_file_scan),
             contentDescription = "start scanning"
         )
     }

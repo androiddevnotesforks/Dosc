@@ -1,36 +1,42 @@
 package com.r.dosc.presentation.scanning
 
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
+import com.r.dosc.domain.ui.theme.White_Shade
+import com.r.dosc.presentation.scanning.components.CameraView
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @ExperimentalPermissionsApi
 @Destination
 @Composable
@@ -66,8 +72,6 @@ fun ScanningCameraScreen(
     )
 
     DoscTheme(darkTheme = true) {
-
-
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -94,68 +98,86 @@ fun ScanningCameraScreen(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "close"
                                 )
-
                             }
                         }
                     )
-
                 }
-
-
             },
-
-            ) {
+        ) {
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                AndroidView(
-                    factory = { ctx ->
-                        val previewView = PreviewView(ctx)
-                        val executor = ContextCompat.getMainExecutor(ctx)
-                        cameraProviderFuture.addListener({
-                            val cameraProvider = cameraProviderFuture.get()
-                            val preview = Preview.Builder().build().also {
-                                it.setSurfaceProvider(previewView.surfaceProvider)
-                            }
-
-                            val cameraSelector = CameraSelector.Builder()
-                                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                                .build()
-
-                            cameraProvider.unbindAll()
-                            cameraProvider.bindToLifecycle(
-                                lifecycleOwner,
-                                cameraSelector,
-                                preview
-                            )
-                        }, executor)
-                        previewView
-                    },
+                CameraView(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(70f),
+                    cameraProviderFuture = cameraProviderFuture,
+                    lifecycleOwner = lifecycleOwner
                 )
 
-                Box(
+
+
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(25f)
                         .background(color = MaterialTheme.colors.primarySurface)
                 ) {
 
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(5f)
+                            .padding(end = 8.dp),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = White_Shade,
+                                    shape = RoundedCornerShape(14.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = "")
+                            }
+                        }
+
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(5f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AnimatedContent(true) {
+                            FloatingActionButton(
+                                onClick = {
+
+                                },
+                                backgroundColor = MaterialTheme.colors.primary,
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(48.dp),
+                                    painter = painterResource(id = R.drawable.ic_dot_circle),
+                                    contentDescription = ""
+                                )
+                            }
+                        }
+
+                    }
+
                 }
-
-
             }
-
-
         }
-
-
     }
-
-
 }
+
+
 
