@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.collect
 @Destination(start = true)
 @Composable
 fun HomeScreen(
-    navigator: DestinationsNavigator,
     permissionViewModel: PermissionViewModel,
     mainViewModel: MainViewModel
 ) {

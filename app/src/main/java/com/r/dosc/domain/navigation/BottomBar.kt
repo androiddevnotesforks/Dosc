@@ -1,5 +1,6 @@
 package com.r.dosc.domain.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -26,6 +27,7 @@ import com.r.dosc.domain.ui.theme.Ocean_Green
 import com.r.dosc.presentation.navDestination
 import com.ramcosta.composedestinations.navigation.navigateTo
 
+@ExperimentalAnimationApi
 @ExperimentalPermissionsApi
 @Composable
 fun BottomBar(
