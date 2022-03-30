@@ -114,6 +114,8 @@ dependencies {
     // If you want to additionally use the CameraX View class
     implementation "androidx.camera:camera-view:${camerax_version}"
 
+    implementation("io.coil-kt:coil-compose:2.0.0-rc02")
+
 
 }
 

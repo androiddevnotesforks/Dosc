@@ -16,7 +16,7 @@ fun CaptureDocFloatingButton(
 ) {
     FloatingActionButton(
         onClick = {
-
+                  onClick()
         },
         backgroundColor = MaterialTheme.colors.primary,
     ) {

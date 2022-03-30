@@ -90,9 +90,9 @@ fun HomeScreen(
         permissionViewModel.uiEvent.collect { event ->
             when (event) {
                 HomeScreenEvents.DirectorySetup -> {
-                    val iconsStoragePath = context.getExternalFilesDir("")
-                    if (iconsStoragePath?.exists() == false) {
-                        iconsStoragePath.mkdirs()
+                    val path = context.getExternalFilesDir("")
+                    if (path?.exists() == false) {
+                        path.mkdirs()
                     } else {
                         // directory available get all pdf files.
 

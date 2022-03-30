@@ -1,6 +1,6 @@
 package com.r.dosc.presentation.scanning
 
-import androidx.compose.runtime.getValue
+import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -19,7 +19,7 @@ class ScanningViewModel
 
 ) : ViewModel() {
 
-    val listOfImages = mutableStateListOf<Int>()
+    val listOfImages = mutableStateListOf<Uri>()
 
     val screenEvents = mutableStateOf<ScanningScreenEvents>(ScanningScreenEvents.CameraScreen)
 
@@ -42,9 +42,8 @@ class ScanningViewModel
         }
     }
 
-    fun addImage() {
-        val addCount = if (listOfImages.lastOrNull() == null) 1 else listOfImages.last() + 1
-        listOfImages.add(addCount)
+    fun addImage(uri: Uri) {
+        listOfImages.add(uri)
     }
 
     private suspend fun setEvents(scanningScreenEvents: ScanningScreenEvents) {

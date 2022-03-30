@@ -1,8 +1,10 @@
 package com.r.dosc.presentation.scanning.components
 
+import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,12 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.r.dosc.domain.ui.theme.White_Shade
 
 
 @Composable
 fun ImagePreviewItem(
-    imageItem: Int,
+    uri: Uri,
     onImageClick: ()  -> Unit
 
 ) {
@@ -31,11 +34,17 @@ fun ImagePreviewItem(
                 shape = RoundedCornerShape(8.dp)
             )
             .clickable {
-                       onImageClick()
+                onImageClick()
             },
         contentAlignment = Alignment.Center
     ) {
-        Text(text = imageItem.toString())
+
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = uri,
+            contentDescription = "",
+            alignment = Alignment.Center
+        )
 
     }
 
