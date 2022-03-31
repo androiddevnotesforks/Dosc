@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,22 +22,23 @@ class ScanningViewModel
 
     val listOfImages = mutableStateListOf<Uri>()
 
-    val screenEvents = mutableStateOf<ScanningScreenEvents>(ScanningScreenEvents.CameraScreen)
 
-    private val _uiEvent = Channel<ScanningScreenEvents>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+    private val _uiEvent = MutableStateFlow<ScanningScreenEvents>(ScanningScreenEvents.CameraScreen)
+    val uiEvent = _uiEvent
+
+    val clickImage = MutableStateFlow(false)
+
 
     fun onEvent(events: ScanningScreenEvents) {
         when (events) {
             is ScanningScreenEvents.OpenDocPreview -> {
-                screenEvents.value = events
+                viewModelScope.launch {
+                    _uiEvent.emit(events)
+                }
             }
             ScanningScreenEvents.CameraScreen -> {
-                screenEvents.value = events
-            }
-            ScanningScreenEvents.onClikCaptureDocument -> {
                 viewModelScope.launch {
-                    setEvents(events)
+                    _uiEvent.emit(events)
                 }
             }
         }
@@ -46,9 +48,10 @@ class ScanningViewModel
         listOfImages.add(uri)
     }
 
-    private suspend fun setEvents(scanningScreenEvents: ScanningScreenEvents) {
-        withContext(Dispatchers.Default) {
-            _uiEvent.send(scanningScreenEvents)
+    fun clickImage(click: Boolean) {
+        viewModelScope.launch {
+            clickImage.emit(click)
+
         }
     }
 

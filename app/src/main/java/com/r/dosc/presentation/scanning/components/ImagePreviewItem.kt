@@ -1,50 +1,96 @@
 package com.r.dosc.presentation.scanning.components
 
 import android.net.Uri
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.primarySurface
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.r.dosc.R
+import com.r.dosc.domain.ui.theme.GrayShade_dark
+import com.r.dosc.domain.ui.theme.Ocean_Green
+import com.r.dosc.domain.ui.theme.Red_Shade
 import com.r.dosc.domain.ui.theme.White_Shade
+import com.r.dosc.presentation.scanning.ScanningViewModel
 
 
 @Composable
 fun ImagePreviewItem(
     uri: Uri,
-    onImageClick: ()  -> Unit
-
+    count: Int,
+    onImageClick: (Uri) -> Unit,
 ) {
+
+
+
+
 
     Box(
         modifier = Modifier
             .size(68.dp)
-            .padding(end = 8.dp, top = 4.dp, bottom = 4.dp)
-            .border(
-                width = 1.dp,
-                color = White_Shade,
-                shape = RoundedCornerShape(8.dp)
-            )
+            .padding(end = 12.dp, top = 6.dp, bottom = 6.dp)
             .clickable {
-                onImageClick()
+                onImageClick(uri)
+
             },
         contentAlignment = Alignment.Center
     ) {
 
         AsyncImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .border(
+                    width = 1.dp,
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .clip(RoundedCornerShape(10.dp)),
             model = uri,
             contentDescription = "",
-            alignment = Alignment.Center
+            contentScale = ContentScale.FillBounds
         )
+
+        Icon(
+            modifier = Modifier
+                .size(13.dp)
+                .offset(x = 26.dp, y = (-27).dp)
+                .clip(RoundedCornerShape(100))
+                .background(GrayShade_dark),
+            imageVector = Icons.Rounded.Remove,
+            contentDescription = "delete",
+            tint = White_Shade
+        )
+
+
+        Box(
+            modifier = Modifier
+                .size(15.dp)
+                .offset(x = (-25).dp, y = 27.dp)
+                .clip(RoundedCornerShape(100))
+                .background(Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = count.toString(), color = White_Shade, fontSize = 10.sp)
+        }
 
     }
 

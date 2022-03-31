@@ -21,6 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.r.dosc.presentation.scanning.ScanningScreenEvents
 import com.r.dosc.presentation.scanning.ScanningViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,21 +60,26 @@ fun CameraView(
         )
         preview.setSurfaceProvider(previewView.surfaceProvider)
 
-        scanningViewModel.uiEvent.collect { event ->
-            when (event) {
-
-                ScanningScreenEvents.onClikCaptureDocument -> {
+        scanningViewModel.clickImage.collectLatest { click ->
+            when (click) {
+                true -> {
                     takePhoto(
                         imageCapture = imageCapture,
                         outputDir = outputDir,
                         executorService = executorService,
                         onImageCaptured = onImageCaptured,
                         onError = onError
+
                     )
+                    scanningViewModel.clickImage(false)
+
                 }
-                else -> {}
+                else -> Unit
             }
         }
+
+
+
     }
 
 

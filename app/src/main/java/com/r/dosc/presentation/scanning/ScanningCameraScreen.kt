@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.math.abs
 
 private lateinit var outputDirectory: File
 private lateinit var cameraExecutor: ExecutorService
@@ -53,17 +55,19 @@ fun ScanningCameraScreen(
     val systemUiController = rememberSystemUiController()
     val lifecycleOwner = LocalLifecycleOwner.current
 
+
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
             val observer = LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
-                    systemUiController.setStatusBarColor(
+                    systemUiController.setSystemBarsColor(
                         color = DarkColorPalette.primarySurface
                     )
-                    systemUiController.setNavigationBarColor(
-                        color = DarkColorPalette.primarySurface
-                    )
+                }
+
+                if (event == Lifecycle.Event.ON_DESTROY) {
+                    deleteTemp(context)
                 }
 
             }
@@ -77,17 +81,12 @@ fun ScanningCameraScreen(
 
     val imgListState = rememberLazyListState()
 
-    LaunchedEffect(key1 = true) {
-        scanningViewModel.uiEvent.collect { event ->
-            when (event) {
-                ScanningScreenEvents.onClikCaptureDocument -> {
-                    imgListState.scrollToItem(0)
-                }
-                ScanningScreenEvents.CameraScreen -> {
-                    imgListState.scrollToItem(0)
-                }
-                else -> {}
-            }
+    val screenUiEvents by scanningViewModel.uiEvent.collectAsState(ScanningScreenEvents.CameraScreen)
+
+    LaunchedEffect(Unit) {
+        scanningViewModel.clickImage.collect {
+            imgListState.scrollToItem(0)
+
         }
     }
 
@@ -150,7 +149,7 @@ fun ScanningCameraScreen(
                         .fillMaxSize()
                         .weight(70f)
                 ) {
-                    when (val event = scanningViewModel.screenEvents.value) {
+                    when (screenUiEvents) {
                         ScanningScreenEvents.CameraScreen -> {
                             CameraView(
                                 modifier = Modifier
@@ -158,12 +157,10 @@ fun ScanningCameraScreen(
                                 outputDir = outputDirectory,
                                 executorService = cameraExecutor,
                                 onImageCaptured = { imgUri ->
-                                    println("imge uri => $imgUri")
                                     scanningViewModel.addImage(imgUri)
                                 },
                                 onError = {
                                     println("imge ex => $it")
-
                                 },
                                 scanningViewModel = scanningViewModel
                             )
@@ -173,15 +170,17 @@ fun ScanningCameraScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
+
                                 AsyncImage(
                                     modifier = Modifier.fillMaxSize(),
-                                    model = event.uri,
+                                    model = (screenUiEvents as ScanningScreenEvents.OpenDocPreview).uri,
                                     contentDescription = "",
-                                    alignment = Alignment.Center
+                                    alignment = Alignment.Center,
+                                    contentScale = ContentScale.FillBounds
                                 )
+
                             }
                         }
-                        else -> Unit
                     }
                 }
 
@@ -208,20 +207,25 @@ fun ScanningCameraScreen(
                                 .weight(8.8f)
                                 .padding(end = 4.dp, start = 4.dp),
                             state = imgListState,
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.End,
+                            reverseLayout = true,
                         ) {
-                            scanningViewModel.listOfImages.forEachIndexed { index, i ->
+                            scanningViewModel.listOfImages.reversed().forEachIndexed { index, i ->
+                                val count = abs(index - scanningViewModel.listOfImages.size)
                                 item {
                                     ImagePreviewItem(
                                         uri = i,
-                                        onImageClick = {
+                                        count,
+                                        onImageClick = { getUri ->
+
                                             scanningViewModel.onEvent(
                                                 ScanningScreenEvents.OpenDocPreview(
-                                                    i
+                                                    getUri
                                                 )
                                             )
-                                        }
+                                        },
                                     )
+
                                 }
                             }
                         }
@@ -233,6 +237,7 @@ fun ScanningCameraScreen(
                                 .weight(1.2f),
                             contentAlignment = Alignment.Center
                         ) {
+
                             GotoCameraScreenButton {
                                 scanningViewModel.onEvent(ScanningScreenEvents.CameraScreen)
                             }
@@ -247,11 +252,9 @@ fun ScanningCameraScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         AnimatedContent(true) {
-
                             CaptureDocFloatingButton {
                                 //on Capture button click...
-                                println("imge clicked")
-                                scanningViewModel.onEvent(ScanningScreenEvents.onClikCaptureDocument)
+                                scanningViewModel.clickImage(true)
                             }
                         }
                     }
@@ -262,13 +265,17 @@ fun ScanningCameraScreen(
 }
 
 
-
-
-
 private fun getOutputDirectory(context: Context): File {
-    val mediaDir = context.getExternalFilesDir("/temp").let {
-        File(it, "Dosc").apply { mkdirs() }
+    val mediaDir1 = context.getExternalFilesDir("").let {
+        File(it, "temp").apply { mkdirs() }
     }
+    return mediaDir1
+}
 
-    return mediaDir
+private fun deleteTemp(context: Context) {
+    val mediaDir = context.getExternalFilesDir("").let {
+        File(it, "temp").apply { mkdirs() }
+    }
+    mediaDir.deleteRecursively()
+
 }
