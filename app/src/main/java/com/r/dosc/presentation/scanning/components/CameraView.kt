@@ -16,11 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import com.google.common.util.concurrent.ListenableFuture
-import com.r.dosc.presentation.scanning.ScanningScreenEvents
 import com.r.dosc.presentation.scanning.ScanningViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.text.SimpleDateFormat
@@ -32,8 +28,6 @@ import kotlin.coroutines.suspendCoroutine
 @Composable
 fun CameraView(
     modifier: Modifier,
-    outputDir: File,
-    executorService: ExecutorService,
     onImageCaptured: (Uri) -> Unit,
     onError: (ImageCaptureException) -> Unit,
     scanningViewModel: ScanningViewModel
@@ -50,7 +44,7 @@ fun CameraView(
         .build()
 
     LaunchedEffect(lensFacing) {
-        val cameraProvider = context.getCameraProvider()
+        val cameraProvider = scanningViewModel.getCameraProvider()
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(
             lifecycleOwner,
@@ -65,8 +59,8 @@ fun CameraView(
                 true -> {
                     takePhoto(
                         imageCapture = imageCapture,
-                        outputDir = outputDir,
-                        executorService = executorService,
+                        outputDir = scanningViewModel.getTempOutputDirectory(),
+                        executorService = scanningViewModel.getCameraExecutor(),
                         onImageCaptured = onImageCaptured,
                         onError = onError
 
@@ -77,7 +71,6 @@ fun CameraView(
                 else -> Unit
             }
         }
-
 
 
     }

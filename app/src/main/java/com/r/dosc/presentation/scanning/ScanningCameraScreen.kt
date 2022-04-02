@@ -1,6 +1,5 @@
 package com.r.dosc.presentation.scanning
 
-import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,13 +29,8 @@ import com.r.dosc.presentation.scanning.components.GotoCameraScreenButton
 import com.r.dosc.presentation.scanning.components.ImagePreviewItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import java.io.File
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import kotlin.math.abs
 
-private lateinit var outputDirectory: File
-private lateinit var cameraExecutor: ExecutorService
 
 @ExperimentalAnimationApi
 @Destination
@@ -46,11 +39,7 @@ fun ScanningCameraScreen(
     navigator: DestinationsNavigator,
     scanningViewModel: ScanningViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
 
-
-    outputDirectory = getOutputDirectory(context)
-    cameraExecutor = Executors.newSingleThreadExecutor()
 
     val systemUiController = rememberSystemUiController()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -66,9 +55,9 @@ fun ScanningCameraScreen(
                     )
                 }
 
-                if (event == Lifecycle.Event.ON_DESTROY) {
-                    deleteTemp(context)
-                }
+//                if (event == Lifecycle.Event.ON_DESTROY) {
+//                    scanningViewModel.getTempOutputDirectory().deleteRecursively()
+//                }
 
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -154,8 +143,6 @@ fun ScanningCameraScreen(
                             CameraView(
                                 modifier = Modifier
                                     .fillMaxSize(),
-                                outputDir = outputDirectory,
-                                executorService = cameraExecutor,
                                 onImageCaptured = { imgUri ->
                                     scanningViewModel.addImage(imgUri)
                                 },
@@ -265,17 +252,5 @@ fun ScanningCameraScreen(
 }
 
 
-private fun getOutputDirectory(context: Context): File {
-    val mediaDir1 = context.getExternalFilesDir("").let {
-        File(it, "temp").apply { mkdirs() }
-    }
-    return mediaDir1
-}
 
-private fun deleteTemp(context: Context) {
-    val mediaDir = context.getExternalFilesDir("").let {
-        File(it, "temp").apply { mkdirs() }
-    }
-    mediaDir.deleteRecursively()
 
-}
