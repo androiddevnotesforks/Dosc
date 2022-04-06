@@ -24,7 +24,7 @@ fun ScanningFloatingButton(
     permissionViewModel: PermissionViewModel,
     mainViewModel: MainViewModel,
     cameraPermissionState: PermissionState,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     FloatingActionButton(
         modifier = Modifier.padding(top = 30.dp),

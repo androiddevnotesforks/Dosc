@@ -12,6 +12,7 @@ val Main_Text_Color = Color(0xFF191A19)
 
 val White_Shade = Color(0xFFFAFAFA)
 val Red_Shade = Color(0xFFFF5733)
+val Green_Shade = Color(0xFF4E9F3D)
 
 //for dark theme
 val Dark_1 = Color(0xFF191A19)

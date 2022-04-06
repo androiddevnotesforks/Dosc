@@ -23,12 +23,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.r.dosc.domain.ui.theme.*
-import com.r.dosc.presentation.scanning.components.CameraView
-import com.r.dosc.presentation.scanning.components.CaptureDocFloatingButton
-import com.r.dosc.presentation.scanning.components.GotoCameraScreenButton
-import com.r.dosc.presentation.scanning.components.ImagePreviewItem
+import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
 
 
@@ -36,10 +34,12 @@ import kotlin.math.abs
 @Destination
 @Composable
 fun ScanningCameraScreen(
+    fileName: String = "",
     navigator: DestinationsNavigator,
     scanningViewModel: ScanningViewModel = hiltViewModel()
 ) {
 
+    val title = if (fileName.isEmpty()) "Document" else fileName
 
     val systemUiController = rememberSystemUiController()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -55,10 +55,6 @@ fun ScanningCameraScreen(
                     )
                 }
 
-//                if (event == Lifecycle.Event.ON_DESTROY) {
-//                    scanningViewModel.getTempOutputDirectory().deleteRecursively()
-//                }
-
             }
             lifecycleOwner.lifecycle.addObserver(observer)
 
@@ -73,9 +69,8 @@ fun ScanningCameraScreen(
     val screenUiEvents by scanningViewModel.uiEvent.collectAsState(ScanningScreenEvents.CameraScreen)
 
     LaunchedEffect(Unit) {
-        scanningViewModel.clickImage.collect {
-            imgListState.scrollToItem(0)
-
+        scanningViewModel.scrollIndex.collectLatest {
+            imgListState.scrollToItem(it)
         }
     }
 
@@ -93,7 +88,7 @@ fun ScanningCameraScreen(
                     TopAppBar(
                         title = {
                             Text(
-                                text = "Document",
+                                text = title,
                                 fontSize = 30.sp,
                                 color = Color.White,
 
@@ -118,8 +113,9 @@ fun ScanningCameraScreen(
 
                             ) {
                                 Icon(
+                                    modifier = Modifier.size(30.dp),
                                     imageVector = Icons.Rounded.DoneAll,
-                                    contentDescription = "close",
+                                    contentDescription = "save",
                                     tint = MaterialTheme.colors.secondary
                                 )
                             }
@@ -147,7 +143,7 @@ fun ScanningCameraScreen(
                                     scanningViewModel.addImage(imgUri)
                                 },
                                 onError = {
-                                    println("imge ex => $it")
+
                                 },
                                 scanningViewModel = scanningViewModel
                             )
@@ -168,6 +164,7 @@ fun ScanningCameraScreen(
 
                             }
                         }
+                        else -> Unit
                     }
                 }
 
@@ -195,22 +192,30 @@ fun ScanningCameraScreen(
                                 .padding(end = 4.dp, start = 4.dp),
                             state = imgListState,
                             horizontalArrangement = Arrangement.End,
-                            reverseLayout = true,
                         ) {
-                            scanningViewModel.listOfImages.reversed().forEachIndexed { index, i ->
-                                val count = abs(index - scanningViewModel.listOfImages.size)
+                            scanningViewModel.listOfImages.forEachIndexed { index, i ->
                                 item {
+                                    val count = abs(index + 1)
                                     ImagePreviewItem(
                                         uri = i,
                                         count,
-                                        onImageClick = { getUri ->
+                                        scanningViewModel,
+                                        onImageClick = { sendUri, _ ->
 
                                             scanningViewModel.onEvent(
                                                 ScanningScreenEvents.OpenDocPreview(
-                                                    getUri
+                                                    sendUri, index
                                                 )
                                             )
+
                                         },
+                                        removeImage = { indx ->
+                                            scanningViewModel.onEvent(
+                                                ScanningScreenEvents.RemoveImage(
+                                                    indx
+                                                )
+                                            )
+                                        }
                                     )
 
                                 }
@@ -225,7 +230,9 @@ fun ScanningCameraScreen(
                             contentAlignment = Alignment.Center
                         ) {
 
-                            GotoCameraScreenButton {
+                            GotoCameraScreenButton(
+                                isScanningMode = scanningViewModel.isScanningMode.collectAsState().value,
+                            ) {
                                 scanningViewModel.onEvent(ScanningScreenEvents.CameraScreen)
                             }
                         }
@@ -238,12 +245,32 @@ fun ScanningCameraScreen(
                             .weight(5f),
                         contentAlignment = Alignment.Center
                     ) {
-                        AnimatedContent(true) {
-                            CaptureDocFloatingButton {
-                                //on Capture button click...
-                                scanningViewModel.clickImage(true)
-                            }
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = scanningViewModel.isScanningMode.collectAsState().value,
+                            enter = slideInVertically { height -> height } + fadeIn(),
+                            exit = slideOutVertically { height -> height } + fadeOut()
+
+                        ) {
+
+                            CaptureDocFloatingButton(
+                                scanningViewModel
+                            )
+
+
                         }
+
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = !scanningViewModel.isScanningMode.collectAsState().value,
+                            enter = slideInVertically { height -> height } + fadeIn(),
+                            exit = slideOutVertically { height -> height } + fadeOut()
+
+                        ) {
+
+                            EditImage()
+
+
+                        }
+
                     }
                 }
             }

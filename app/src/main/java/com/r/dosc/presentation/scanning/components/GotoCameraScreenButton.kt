@@ -11,20 +11,27 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.r.dosc.domain.ui.theme.GrayShade_dark
 import com.r.dosc.domain.ui.theme.GrayShade_light
+import com.r.dosc.domain.ui.theme.Green_Shade
+import com.r.dosc.domain.ui.theme.Ocean_Green
 
 @Composable
 fun GotoCameraScreenButton(
+    isScanningMode: Boolean = true,
     onClick: () -> Unit
 ) {
+
+    val color = if (isScanningMode) Green_Shade else GrayShade_light
+
     Box(
         modifier = Modifier
             .size(40.dp)
             .border(
                 width = 2.dp,
-                color = GrayShade_dark,
+                color = color,
                 shape = RoundedCornerShape(10.dp)
             ),
         contentAlignment = Alignment.Center
@@ -35,7 +42,7 @@ fun GotoCameraScreenButton(
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "",
-                tint = GrayShade_light
+                tint = Color.White
             )
         }
     }

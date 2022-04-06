@@ -38,10 +38,7 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.File
-import java.util.concurrent.ExecutorService
 
 @ExperimentalPermissionsApi
 @ExperimentalAnimationApi
@@ -49,8 +46,6 @@ import java.util.concurrent.ExecutorService
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +92,7 @@ class MainActivity : ComponentActivity() {
 
                     Scaffold(
                         topBar = {
-                            AnimatedVisibility (
+                            AnimatedVisibility(
                                 visible = shouldShowBottomNavBarTopBarFloatBtn(navBackStackEntry),
                                 enter = expandVertically(),
                                 exit = shrinkVertically()
@@ -137,13 +132,14 @@ class MainActivity : ComponentActivity() {
                                     mainViewModel = mainViewModel,
                                     cameraPermissionState = cameraPermissionState,
                                     onClick = {
+                                        mainViewModel.scanningStart(true)
+
                                         systemUiController.setStatusBarColor(
                                             color = DarkColorPalette.primarySurface
                                         )
                                         systemUiController.setNavigationBarColor(
                                             color = DarkColorPalette.primarySurface
                                         )
-                                        mainViewModel.scanningStart(true)
                                     }
                                 )
                             }
@@ -172,10 +168,9 @@ class MainActivity : ComponentActivity() {
 
                     if (mainViewModel.scanningStart.value == true) {
 
-                        navController.navigateTo(ScanningCameraScreenDestination) {
+                        navController.navigateTo(ScanningCameraScreenDestination("")) {
                             launchSingleTop = true
                             popUpTo(HomeScreenDestination.route)
-
 
                         }
                         mainViewModel.scanningStart(null)
@@ -184,7 +179,16 @@ class MainActivity : ComponentActivity() {
 
 
                     if (mainViewModel.isOpenDialogBox.value) {
-                        OpenDialogBox(mainViewModel)
+                        OpenDialogBox(
+                            viewModel = mainViewModel,
+                            onSubmit = { fileName ->
+                                navController.navigateTo(ScanningCameraScreenDestination(fileName)) {
+                                    launchSingleTop = true
+                                    popUpTo(HomeScreenDestination.route)
+
+                                }
+                            }
+                        )
                     }
 
                     LaunchedEffect(key1 = true) {

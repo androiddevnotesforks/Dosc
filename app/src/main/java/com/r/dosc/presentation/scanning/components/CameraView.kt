@@ -1,12 +1,10 @@
 package com.r.dosc.presentation.scanning.components
 
-import android.content.Context
 import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,15 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import com.r.dosc.presentation.scanning.ScanningViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @Composable
 fun CameraView(
@@ -72,7 +67,6 @@ fun CameraView(
             }
         }
 
-
     }
 
 
@@ -118,11 +112,3 @@ private fun takePhoto(
 
 }
 
-private suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { cnt ->
-    ProcessCameraProvider.getInstance(this).also { cameraProvider ->
-        cameraProvider.addListener({
-            cnt.resume(cameraProvider.get())
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-}

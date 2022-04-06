@@ -18,23 +18,50 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.domain.ui.theme.White_Shade
+import com.r.dosc.domain.ui.theme.*
+import com.r.dosc.presentation.scanning.ScanningScreenEvents
+import com.r.dosc.presentation.scanning.ScanningViewModel
 
 
 @Composable
 fun ImagePreviewItem(
     uri: Uri,
     count: Int,
-    onImageClick: (Uri) -> Unit,
+    scanningViewModel: ScanningViewModel,
+    removeImage: (Int) -> Unit,
+    onImageClick: (Uri, Int) -> Unit,
 ) {
+
+    var isSelected by remember {
+        mutableStateOf(Color.LightGray)
+
+    }
+
+    LaunchedEffect(Unit) {
+        scanningViewModel.uiEvent.collect { uiEvent ->
+            isSelected = when (uiEvent) {
+                is ScanningScreenEvents.OpenDocPreview -> {
+                    if (uiEvent.indx == count - 1) {
+                        Green_Shade
+                    } else {
+                        Color.LightGray
+                    }
+                }
+                else -> {
+                    Color.LightGray
+                }
+            }
+
+        }
+
+    }
 
     Box(
         modifier = Modifier
             .size(68.dp)
             .padding(end = 12.dp, top = 6.dp, bottom = 6.dp)
             .clickable {
-                onImageClick(uri)
+                onImageClick(uri, count - 1)
 
             },
         contentAlignment = Alignment.Center
@@ -45,7 +72,7 @@ fun ImagePreviewItem(
                 .fillMaxSize()
                 .border(
                     width = 1.dp,
-                    color = Color.LightGray,
+                    color = isSelected,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .clip(RoundedCornerShape(10.dp)),
@@ -59,7 +86,10 @@ fun ImagePreviewItem(
                 .size(13.dp)
                 .offset(x = 26.dp, y = (-27).dp)
                 .clip(RoundedCornerShape(100))
-                .background(GrayShade_dark),
+                .background(GrayShade_dark)
+                .clickable {
+                    removeImage(count - 1)
+                },
             imageVector = Icons.Rounded.Remove,
             contentDescription = "delete",
             tint = White_Shade

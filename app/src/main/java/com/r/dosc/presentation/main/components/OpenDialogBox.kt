@@ -1,5 +1,6 @@
 package com.r.dosc.presentation.main.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -14,7 +15,8 @@ import com.r.dosc.presentation.main.MainViewModel
 
 @Composable
 fun OpenDialogBox(
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    onSubmit: (String) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -48,7 +50,7 @@ fun OpenDialogBox(
                     textStyle = TextStyle(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
-                        color = MaterialTheme.colors.onPrimary
+                        color = if (isSystemInDarkTheme() || viewModel.isDarkThemeState.value) Color.White else  Color.Black
                     ),
                     placeholder = {
                         Text(text = "Type here..", color = Color.LightGray)
@@ -84,6 +86,12 @@ fun OpenDialogBox(
                         .height(45.dp)
                         .padding(start = 6.dp, end = 12.dp),
                     onClick = {
+                        if (text.isEmpty()) {
+                            viewModel.onEvent(MainScreenEvents.ShowSnackBar("Enter Name"))
+                        } else {
+                            onSubmit(text)
+                        }
+                        viewModel.onEvent(MainScreenEvents.OpenDialog(false))
 
                     },
                 ) {
