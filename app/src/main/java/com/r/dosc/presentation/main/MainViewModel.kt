@@ -11,7 +11,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 const val HOME_SCREEN = "Dosc"
@@ -20,9 +19,7 @@ const val SETTINGS_SCREEN = "Settings"
 @HiltViewModel
 class MainViewModel @Inject constructor(
     var prefStorage: PreferenceStorage,
-    private val tempDirectory: File,
-
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _duration = MutableStateFlow(true)
     val duration = _duration.asStateFlow()
@@ -115,8 +112,6 @@ class MainViewModel @Inject constructor(
         isStartWithFileNameState.value = isStartWithFileName
         prefStorage.setIsStartWithFileName(isStartWithFileName = isStartWithFileName)
     }
-
-    fun getTempOutputDirectory() : File  = tempDirectory
 
 
 

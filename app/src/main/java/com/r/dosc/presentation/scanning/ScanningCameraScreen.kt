@@ -39,7 +39,10 @@ fun ScanningCameraScreen(
     scanningViewModel: ScanningViewModel = hiltViewModel()
 ) {
 
-    val title = if (fileName.isEmpty()) "Document" else fileName
+    scanningViewModel.docName = fileName
+
+
+    val title = fileName.ifEmpty { "Document" }
 
     val systemUiController = rememberSystemUiController()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -72,6 +75,13 @@ fun ScanningCameraScreen(
         scanningViewModel.scrollIndex.collectLatest {
             imgListState.scrollToItem(it)
         }
+
+
+
+
+    }
+    if (scanningViewModel.close.collectAsState().value) {
+        navigator.navigateUp()
     }
 
 
@@ -108,7 +118,7 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    navigator.navigateUp()
+                                    scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
                                 }
 
                             ) {

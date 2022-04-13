@@ -14,12 +14,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
+import javax.inject.Named
 
 
 @ExperimentalPermissionsApi
 @HiltViewModel
-class PermissionViewModel @Inject constructor() : ViewModel() {
+class PermissionViewModel @Inject constructor(
+    @Named("dosc") private val mainDirectory: File,
+) : ViewModel() {
 
     val permissionsCamera: MutableState<Permissions> = mutableStateOf(Permissions.NOT_REQUESTED)
 
@@ -38,17 +42,12 @@ class PermissionViewModel @Inject constructor() : ViewModel() {
     fun onEvent(homeScreenEvents: HomeScreenEvents) {
         when (homeScreenEvents) {
             HomeScreenEvents.DirectorySetup -> {
-                setHomeScreenEvent(HomeScreenEvents.DirectorySetup)
-            }
+                if (!mainDirectory.exists()) {
+                    mainDirectory.mkdirs()
+                }            }
         }
     }
 
-    private fun setHomeScreenEvent(homeScreenEvents: HomeScreenEvents) {
-        viewModelScope.launch {
-            _uiEvent.send(homeScreenEvents)
-        }
-
-    }
 
     fun onPermissionState(permissionsState: MultiplePermissionsState) {
         permissionsState.permissions.forEach { perm ->

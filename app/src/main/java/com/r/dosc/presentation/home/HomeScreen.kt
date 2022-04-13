@@ -40,8 +40,6 @@ fun HomeScreen(
         iterations = LottieConstants.IterateForever,
     )
 
-    val context = LocalContext.current
-
 
     val readPermissionState =
         rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -60,8 +58,6 @@ fun HomeScreen(
         Permissions.HAS_PERMISSION -> {
             //setup directory
             permissionViewModel.onEvent(HomeScreenEvents.DirectorySetup)
-
-
         }
         Permissions.SHOULD_SHOW_RATIONAL -> {
             //ask for permission
@@ -74,24 +70,6 @@ fun HomeScreen(
         else -> Unit
     }
 
-    LaunchedEffect(key1 = true) {
-
-        permissionViewModel.uiEvent.collect { event ->
-            when (event) {
-                HomeScreenEvents.DirectorySetup -> {
-                    val path = context.getExternalFilesDir("")
-                    if (path?.exists() == false) {
-                        path.mkdirs()
-                    } else {
-                        // directory available get all pdf files.
-
-                    }
-                }
-            }
-
-        }
-
-    }
 
 }
 

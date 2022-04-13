@@ -14,6 +14,7 @@ import kotlinx.coroutines.SupervisorJob
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -29,9 +30,19 @@ object ScanningModule {
 
     @Singleton
     @Provides
+    @Named(value = "temp")
     fun provideOutputTempDirectory(@ApplicationContext appContext: Context): File {
         return appContext.getExternalFilesDir("").let {
             File(it, "temp").apply { mkdirs() }
+        }
+    }
+
+    @Singleton
+    @Provides
+    @Named(value = "dosc")
+    fun provideOutputMainDirectory(@ApplicationContext appContext: Context): File {
+        return appContext.getExternalFilesDir("").let {
+            File(it, "dosc").apply { mkdirs() }
         }
     }
 
