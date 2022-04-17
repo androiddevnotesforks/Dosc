@@ -22,7 +22,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.r.dosc.domain.ui.theme.*
+import com.r.dosc.domain.ui.theme.DarkColorPalette
+import com.r.dosc.domain.ui.theme.DoscTheme
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -75,13 +76,13 @@ fun ScanningCameraScreen(
         scanningViewModel.scrollIndex.collectLatest {
             imgListState.scrollToItem(it)
         }
-
-
-
-
     }
     if (scanningViewModel.close.collectAsState().value) {
         navigator.navigateUp()
+    }
+
+    if (scanningViewModel.showDialog.collectAsState().value) {
+        DocCreatingDialog()
     }
 
 

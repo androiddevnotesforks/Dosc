@@ -56,7 +56,9 @@ fun CameraView(
                         imageCapture = imageCapture,
                         outputDir = scanningViewModel.getTempOutputDirectory(),
                         executorService = scanningViewModel.getCameraExecutor(),
-                        onImageCaptured = onImageCaptured,
+                        onImageCaptured = { uri ->
+                            onImageCaptured(uri)
+                        },
                         onError = onError
 
                     )
@@ -68,7 +70,6 @@ fun CameraView(
         }
 
     }
-
 
     AndroidView(
         {
@@ -86,7 +87,7 @@ private fun takePhoto(
     onError: (ImageCaptureException) -> Unit
 ) {
 
-    val photoFile = File(
+    val photoOutputTempFile = File(
         outputDir,
         SimpleDateFormat(
             "yyy-MM-dd-HH-ss-SSS",
@@ -94,14 +95,14 @@ private fun takePhoto(
         ).format(System.currentTimeMillis()) + ".jpg"
     )
 
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoOutputTempFile).build()
 
     imageCapture.takePicture(
         outputOptions,
         executorService,
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val saveUri = Uri.fromFile(photoFile)
+                val saveUri: Uri = Uri.fromFile(photoOutputTempFile)
                 onImageCaptured(saveUri)
             }
 
@@ -111,4 +112,5 @@ private fun takePhoto(
         })
 
 }
+
 

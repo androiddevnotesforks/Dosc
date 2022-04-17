@@ -8,13 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.airbnb.lottie.compose.LottieConstants
 import com.itextpdf.text.Document
 import com.itextpdf.text.Image
-import com.itextpdf.text.pdf.PdfWriter
+import com.itextpdf.text.Rectangle
 import com.r.dosc.di.modules.CamX
+import com.r.dosc.domain.util.DocumentEssential
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -28,11 +30,12 @@ class ScanningViewModel
     @Named("temp") private val tempDirectory: File,
     @Named("dosc") private val mainDirectory: File,
     private val cameraExecutor: ExecutorService,
-    private val camX: CamX
+    private val camX: CamX,
+    private val documentEssential: DocumentEssential,
+    private val iDocument: Document
 ) : ViewModel() {
 
     var docName = ""
-
 
     val listOfImages = mutableStateListOf<Uri>()
 
@@ -40,6 +43,7 @@ class ScanningViewModel
     val uiEvent = _uiEvent
 
     val close = MutableStateFlow(false)
+    val showDialog = MutableStateFlow(false)
     val clickImage = MutableStateFlow(false)
     val isScanningMode = MutableStateFlow(true)
     val iterationsBtn = MutableStateFlow(LottieConstants.IterateForever)
@@ -77,49 +81,54 @@ class ScanningViewModel
 
             }
             ScanningScreenEvents.SavePdf -> {
-                val document = Document()
-
-                //val dir = if (docName.isNotEmpty()) "$mainDirectory/$docName.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
-                val dir =
-                    if (docName.isNotEmpty()) "$mainDirectory/${
-                        checkFileExist(
-                            docName,
-                            0
-                        )
-                    }.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
-
-                PdfWriter.getInstance(
-                    document,
-                    FileOutputStream(dir)
-                )
-
-                document.open()
-
-                listOfImages.forEach { directoryPath ->
-                    val image: Image = Image.getInstance(directoryPath.toString())
-
-                    val scale = (document.pageSize.width - document.leftMargin()
-                            - document.rightMargin() - 0) / image.width * 100 // 0 means you have no indentation. If you have any, change it.
-
-                    image.scalePercent(scale)
-
-                    image.alignment = Image.ALIGN_CENTER or Image.ALIGN_TOP
-
-
-                    document.add(image)
-                }
-
-                document.close()
-
-                viewModelScope.launch {
-                    close.emit(true)
-                }
-
+                showDialog.value = true
+                createPdfDocument()
             }
             else -> Unit
         }
 
     }
+
+    private fun createPdfDocument() {
+        documentEssential.pdfWriter(iDocument, getFileName())
+
+        iDocument.open()
+
+        var count = 0
+        viewModelScope.launch {
+
+            val creatingPdf = async {
+                listOfImages.forEach { imFile ->
+                    count++
+
+                    val image: Image =
+                        Image.getInstance(documentEssential.compressImage(count, imFile))
+
+                    image.setAbsolutePosition(0f, 0f)
+
+                    iDocument.pageSize = Rectangle(image.width, image.height)
+
+
+                    iDocument.newPage()
+
+                    iDocument.add(image)
+
+                }
+
+
+            }
+            creatingPdf.await()
+
+            delay(3000L)
+            showDialog.value = false
+            close.emit(true)
+
+
+        }
+
+
+    }
+
 
     fun addImage(uri: Uri) {
         viewModelScope.launch {
@@ -165,14 +174,10 @@ class ScanningViewModel
         return "dosc-$timeStamp"
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        getTempOutputDirectory().deleteRecursively()
-    }
-
     private fun checkFileExist(f: String, count: Int): String {
 
-        val file = if (count > 0) File("$mainDirectory/$f($count).pdf") else File("$mainDirectory/$f.pdf")
+        val file =
+            if (count > 0) File("$mainDirectory/$f($count).pdf") else File("$mainDirectory/$f.pdf")
 
         return if (!file.exists()) {
             if (count > 0) {
@@ -182,11 +187,23 @@ class ScanningViewModel
             }
 
         } else {
-            checkFileExist(f, count+1)
+            checkFileExist(f, count + 1)
         }
 
     }
 
+    private fun getFileName(): String = if (docName.isNotEmpty()) "$mainDirectory/${
+        checkFileExist(
+            docName,
+            0
+        )
+    }.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
+
+    override fun onCleared() {
+        super.onCleared()
+        iDocument.close()
+        getTempOutputDirectory().deleteRecursively()
+    }
 
 }
 

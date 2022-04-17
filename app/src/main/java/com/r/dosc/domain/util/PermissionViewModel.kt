@@ -4,7 +4,6 @@ import android.Manifest
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
@@ -13,7 +12,6 @@ import com.r.dosc.presentation.home.HomeScreenEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -39,12 +37,22 @@ class PermissionViewModel @Inject constructor(
     val isStorageReadGranted = mutableStateOf(false)
     val isStorageWriteGranted = mutableStateOf(false)
 
+    val listOfPdfs = mutableListOf<File>()
+
+    var isPdfRead = false
+
     fun onEvent(homeScreenEvents: HomeScreenEvents) {
         when (homeScreenEvents) {
             HomeScreenEvents.DirectorySetup -> {
                 if (!mainDirectory.exists()) {
                     mainDirectory.mkdirs()
-                }            }
+                } else {
+                    if (!isPdfRead) {
+                        listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
+                        isPdfRead = true
+                    }
+                }
+            }
         }
     }
 

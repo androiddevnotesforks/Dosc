@@ -4,9 +4,11 @@ import android.Manifest
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import com.airbnb.lottie.compose.*
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -56,7 +58,6 @@ fun HomeScreen(
 
     when (permissionViewModel.permissionsStorageWrite.value) {
         Permissions.HAS_PERMISSION -> {
-            //setup directory
             permissionViewModel.onEvent(HomeScreenEvents.DirectorySetup)
         }
         Permissions.SHOULD_SHOW_RATIONAL -> {

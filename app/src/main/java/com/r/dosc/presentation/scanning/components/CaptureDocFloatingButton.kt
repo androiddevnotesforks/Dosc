@@ -3,7 +3,10 @@ package com.r.dosc.presentation.scanning.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
@@ -15,13 +18,6 @@ import com.r.dosc.presentation.scanning.ScanningViewModel
 fun CaptureDocFloatingButton(
     scanningViewModel: ScanningViewModel,
 ) {
-
-
-
-    var count by remember {
-        mutableStateOf(0)
-    }
-
 
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.camera_click_anim)

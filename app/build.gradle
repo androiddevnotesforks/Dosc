@@ -113,9 +113,13 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.0.0-rc03")
 
-    //implementation("com.itextpdf:itext7-core:7.2.1")
+    implementation("com.itextpdf:itext7-core:7.2.1")
     implementation 'com.itextpdf:itextg:5.5.10'
 
+    implementation "id.zelory:compressor:3.0.1"
+
+
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
 
 
