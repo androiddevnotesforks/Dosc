@@ -13,12 +13,14 @@ import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.presentation.home.components.ReadDirectory
 import com.r.dosc.presentation.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @ExperimentalPermissionsApi
 @Destination(start = true)
 @Composable
 fun HomeScreen(
+    navigator: DestinationsNavigator,
     permissionViewModel: PermissionViewModel,
     mainViewModel: MainViewModel
 ) {
@@ -36,7 +38,8 @@ fun HomeScreen(
 
     ReadDirectory(
         permissionViewModel = permissionViewModel,
-        readPermissionState = readPermissionState
+        readPermissionState = readPermissionState,
+        navigator
     )
 
     when (permissionViewModel.permissionsStorageWrite.value) {

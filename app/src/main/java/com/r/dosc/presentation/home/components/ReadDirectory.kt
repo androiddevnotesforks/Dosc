@@ -13,13 +13,16 @@ import com.google.accompanist.permissions.PermissionState
 import com.r.dosc.domain.constants.Permissions
 import com.r.dosc.domain.ui.theme.Helper_Text_Color
 import com.r.dosc.domain.util.PermissionViewModel
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.io.File
 
 @ExperimentalPermissionsApi
 @Composable
 fun ReadDirectory(
     permissionViewModel: PermissionViewModel,
-    readPermissionState: PermissionState
+    readPermissionState: PermissionState,
+    navigator: DestinationsNavigator
+
 ) {
     when (permissionViewModel.permissionsStorageRead.value) {
         Permissions.HAS_PERMISSION -> {
@@ -27,7 +30,7 @@ fun ReadDirectory(
                 OnEmptyState()
 
             } else {
-                ShowPdfList(listOfPdfs = permissionViewModel.listOfPdfs as ArrayList<File>)
+                ShowPdfList(listOfPdfs = permissionViewModel.listOfPdfs as ArrayList<File>, navigator)
             }
         }
         Permissions.SHOULD_SHOW_RATIONAL -> {
@@ -48,12 +51,14 @@ fun ReadDirectory(
 
 @Composable
 fun ShowPdfList(
-    listOfPdfs: ArrayList<File>
+    listOfPdfs: ArrayList<File>,
+    navigator: DestinationsNavigator
+
 ) {
     LazyColumn(
     ) {
         items(listOfPdfs.sortedDescending()) { pdf ->
-            PdfItem(file = pdf)
+            PdfItem(file = pdf, navigator)
             Divider(
                 modifier = Modifier.padding(start = 50.dp, end = 12.dp),
                 color = Helper_Text_Color,

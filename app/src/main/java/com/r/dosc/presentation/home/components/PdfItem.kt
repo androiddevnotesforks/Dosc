@@ -1,12 +1,13 @@
 package com.r.dosc.presentation.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,19 +16,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.GrayShade_dark
+import com.r.dosc.presentation.destinations.PdfViewerDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun PdfItem(
-    file: File
+    file: File,
+    navigator: DestinationsNavigator
 ) {
+    var cliked by remember {
+        mutableStateOf(false)
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp),
+            .height(70.dp)
+            .clickable {
+                cliked = true
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -47,14 +57,17 @@ fun PdfItem(
             Text(text = file.name, fontSize = 19.sp)
 
             Row {
-                Text(text = getFileDate(file.lastModified()), fontSize = 14.sp, color = GrayShade_dark)
+                Text(
+                    text = getFileDate(file.lastModified()),
+                    fontSize = 14.sp,
+                    color = GrayShade_dark
+                )
 
                 Spacer(modifier = Modifier.width(6.dp))
 
                 Text(text = getFileSize(file.length()), fontSize = 14.sp, color = GrayShade_dark)
 
             }
-
 
 
         }
@@ -78,6 +91,11 @@ fun PdfItem(
 
     }
 
+    if (cliked){
+        navigator.navigate(PdfViewerDestination(file = file))
+        cliked = false
+    }
+
 }
 
 fun getFileSize(length: Long): String {
@@ -89,7 +107,7 @@ fun getFileSize(length: Long): String {
     }
 }
 
-fun getFileDate(timestamp:Long) : String{
+fun getFileDate(timestamp: Long): String {
     val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
     return sdf.format(timestamp)
 }
