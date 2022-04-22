@@ -7,9 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -21,18 +23,18 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.r.dosc.domain.navigation.BottomBar
-import com.r.dosc.presentation.NavGraphs
-import com.r.dosc.presentation.destinations.SettingsScreenDestination
-import com.r.dosc.domain.ui.theme.DoscTheme
-import com.r.dosc.presentation.destinations.HomeScreenDestination
-import com.r.dosc.presentation.main.components.OpenDialogBox
-import com.r.dosc.presentation.main.components.SetupPermissions
-import com.r.dosc.domain.util.PermissionViewModel
-import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
 import com.r.dosc.domain.components.SetUpStatusBar
+import com.r.dosc.domain.navigation.BottomBar
 import com.r.dosc.domain.ui.theme.DarkColorPalette
+import com.r.dosc.domain.ui.theme.DoscTheme
+import com.r.dosc.domain.util.PermissionViewModel
+import com.r.dosc.presentation.NavGraphs
+import com.r.dosc.presentation.destinations.HomeScreenDestination
+import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
+import com.r.dosc.presentation.destinations.SettingsScreenDestination
+import com.r.dosc.presentation.main.components.OpenDialogBox
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
+import com.r.dosc.presentation.main.components.SetupPermissions
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
@@ -159,6 +161,9 @@ class MainActivity : ComponentActivity() {
                                 }
                                 if (destination is SettingsScreenDestination) {
                                     dependency(mainViewModel)
+                                }
+                                if (destination is ScanningCameraScreenDestination) {
+                                    dependency(permissionViewModel)
                                 }
 
 

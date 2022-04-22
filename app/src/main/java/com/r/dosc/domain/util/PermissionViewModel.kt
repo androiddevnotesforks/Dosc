@@ -39,20 +39,17 @@ class PermissionViewModel @Inject constructor(
 
     val listOfPdfs = mutableListOf<File>()
 
-    var isPdfRead = false
+    init {
+        if (mainDirectory.exists()) {
+            listOfPdfs.removeAll(listOfPdfs)
+            listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
+        }
+    }
 
-    fun onEvent(homeScreenEvents: HomeScreenEvents) {
-        when (homeScreenEvents) {
-            HomeScreenEvents.DirectorySetup -> {
-                if (!mainDirectory.exists()) {
-                    mainDirectory.mkdirs()
-                } else {
-                    if (!isPdfRead) {
-                        listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
-                        isPdfRead = true
-                    }
-                }
-            }
+    fun updateList() {
+        if (mainDirectory.exists()) {
+            listOfPdfs.removeAll(listOfPdfs)
+            listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
         }
     }
 

@@ -21,9 +21,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
+import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -31,13 +33,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
 
 
+@ExperimentalPermissionsApi
 @ExperimentalAnimationApi
 @Destination
 @Composable
 fun ScanningCameraScreen(
     fileName: String = "",
     navigator: DestinationsNavigator,
-    scanningViewModel: ScanningViewModel = hiltViewModel()
+    scanningViewModel: ScanningViewModel = hiltViewModel(),
+    permissionViewModel: PermissionViewModel
 ) {
 
     scanningViewModel.docName = fileName
@@ -78,6 +82,7 @@ fun ScanningCameraScreen(
         }
     }
     if (scanningViewModel.close.collectAsState().value) {
+        permissionViewModel.updateList()
         navigator.navigateUp()
     }
 

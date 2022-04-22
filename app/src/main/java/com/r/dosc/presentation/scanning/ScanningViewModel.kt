@@ -54,6 +54,9 @@ class ScanningViewModel
         if (!tempDirectory.exists()) {
             tempDirectory.mkdirs()
         }
+        if (!mainDirectory.exists()) {
+            mainDirectory.mkdirs()
+        }
     }
 
     fun onEvent(events: ScanningScreenEvents) {
@@ -123,9 +126,7 @@ class ScanningViewModel
             showDialog.value = false
             close.emit(true)
 
-
         }
-
 
     }
 
@@ -135,8 +136,6 @@ class ScanningViewModel
             listOfImages.add(uri)
             scrollIndex.emit(listOfImages.size)
         }
-
-
     }
 
     fun clickImage(click: Boolean) {
@@ -167,13 +166,6 @@ class ScanningViewModel
 
     suspend fun getCameraProvider(): ProcessCameraProvider = camX.getCameraProvider()
 
-    private fun getDefaultName(): String {
-        val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault())
-        val timeStamp: String = dateFormat.format(currentTime)
-        return "dosc-$timeStamp"
-    }
-
     private fun checkFileExist(f: String, count: Int): String {
 
         val file =
@@ -198,6 +190,13 @@ class ScanningViewModel
             0
         )
     }.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
+
+    private fun getDefaultName(): String {
+        val currentTime = System.currentTimeMillis()
+        val dateFormat = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault())
+        val timeStamp: String = dateFormat.format(currentTime)
+        return "dosc-$timeStamp"
+    }
 
     override fun onCleared() {
         super.onCleared()

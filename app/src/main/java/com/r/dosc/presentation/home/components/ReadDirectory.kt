@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.LottieComposition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.r.dosc.domain.constants.Permissions
@@ -20,14 +19,12 @@ import java.io.File
 @Composable
 fun ReadDirectory(
     permissionViewModel: PermissionViewModel,
-    composition: LottieComposition?,
-    progress: Float,
     readPermissionState: PermissionState
 ) {
     when (permissionViewModel.permissionsStorageRead.value) {
         Permissions.HAS_PERMISSION -> {
             if (permissionViewModel.listOfPdfs.isEmpty()) {
-                OnEmptyState(composition = composition, progress = progress)
+                OnEmptyState()
 
             } else {
                 ShowPdfList(listOfPdfs = permissionViewModel.listOfPdfs as ArrayList<File>)
@@ -37,14 +34,11 @@ fun ReadDirectory(
             //ask for permission
             LaunchedEffect(key1 = true) {
                 readPermissionState.launchPermissionRequest()
-
             }
         }
         Permissions.IS_PERMANENTLY_DENIED -> {
             OnEmptyState(
                 "Storage permission is needed to access doc.\n Enable it form app settings.",
-                composition,
-                progress
             )
 
         }
@@ -56,7 +50,6 @@ fun ReadDirectory(
 fun ShowPdfList(
     listOfPdfs: ArrayList<File>
 ) {
-
     LazyColumn(
     ) {
         items(listOfPdfs.sortedDescending()) { pdf ->
