@@ -55,9 +55,11 @@ fun ShowPdfList(
     navigator: DestinationsNavigator
 
 ) {
+    listOfPdfs.sortedBy { it.lastModified() }
+
     LazyColumn(
     ) {
-        items(listOfPdfs.sortedDescending()) { pdf ->
+        items(listOfPdfs.reversed()) { pdf ->
             PdfItem(file = pdf, navigator)
             Divider(
                 modifier = Modifier.padding(start = 50.dp, end = 12.dp),

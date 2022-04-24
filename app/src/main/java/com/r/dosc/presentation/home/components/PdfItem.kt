@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.presentation.destinations.PdfViewerDestination
+import com.r.dosc.presentation.destinations.PdfDocViewerDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.io.File
 import java.text.SimpleDateFormat
@@ -92,7 +92,7 @@ fun PdfItem(
     }
 
     if (cliked){
-        navigator.navigate(PdfViewerDestination(file = file))
+        navigator.navigate(PdfDocViewerDestination(file = file))
         cliked = false
     }
 
