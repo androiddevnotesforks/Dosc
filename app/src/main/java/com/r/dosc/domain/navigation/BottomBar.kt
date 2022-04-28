@@ -13,7 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,9 +22,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.get
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.r.dosc.domain.ui.theme.Ocean_Green
 import com.r.dosc.presentation.destinations.Destination
 import com.r.dosc.presentation.destinations.HomeScreenDestination
-import com.r.dosc.domain.ui.theme.Ocean_Green
 import com.r.dosc.presentation.navDestination
 import com.ramcosta.composedestinations.navigation.navigateTo
 

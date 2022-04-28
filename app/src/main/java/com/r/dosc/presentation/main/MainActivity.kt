@@ -196,7 +196,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    LaunchedEffect(key1 = true) {
+                    LaunchedEffect(Unit) {
                         mainViewModel.uiEvent.collect { event ->
                             when (event) {
                                 is MainScreenEvents.ShowSnackBar -> {

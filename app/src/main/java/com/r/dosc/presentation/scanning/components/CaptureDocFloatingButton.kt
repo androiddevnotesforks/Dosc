@@ -20,7 +20,7 @@ fun CaptureDocFloatingButton(
 ) {
 
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.camera_click_anim)
+        LottieCompositionSpec.RawRes(R.raw.white_click)
     )
 
     val progress by animateLottieCompositionAsState(

@@ -49,7 +49,7 @@ fun CameraView(
         )
         preview.setSurfaceProvider(previewView.surfaceProvider)
 
-        scanningViewModel.clickImage.collectLatest { click ->
+        scanningViewModel.captureImage.collectLatest { click ->
             when (click) {
                 true -> {
                     takePhoto(

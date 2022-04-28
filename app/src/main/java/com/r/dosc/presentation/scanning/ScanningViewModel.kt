@@ -42,10 +42,11 @@ class ScanningViewModel
     private val _uiEvent = MutableStateFlow<ScanningScreenEvents>(ScanningScreenEvents.CameraScreen)
     val uiEvent = _uiEvent
 
-    val close = MutableStateFlow(false)
+    val closeScanningScreen = MutableStateFlow(false)
     val showDialog = MutableStateFlow(false)
-    val clickImage = MutableStateFlow(false)
+    val captureImage = MutableStateFlow(false)
     val isScanningMode = MutableStateFlow(true)
+    val isDocumentPreviewMode = MutableStateFlow(false)
     val iterationsBtn = MutableStateFlow(LottieConstants.IterateForever)
     var scrollIndex = MutableStateFlow(0)
     private val isClickedFirstTime = MutableStateFlow(CaptureButtonAnim.INITIAL)
@@ -63,23 +64,23 @@ class ScanningViewModel
         when (events) {
             is ScanningScreenEvents.OpenDocPreview -> {
                 iterationsBtn.value = 2
+                isDocumentPreviewMode.value = true
                 isScanningMode.value = false
                 viewModelScope.launch {
                     _uiEvent.emit(events)
                 }
             }
             ScanningScreenEvents.CameraScreen -> {
+                isDocumentPreviewMode.value = false
                 isScanningMode.value = true
                 viewModelScope.launch {
                     _uiEvent.emit(events)
-
                 }
             }
             is ScanningScreenEvents.RemoveImage -> {
                 listOfImages.removeAt(events.indx)
                 if (!isScanningMode.value) {
                     onEvent(ScanningScreenEvents.CameraScreen)
-
                 }
 
             }
@@ -87,6 +88,7 @@ class ScanningViewModel
                 showDialog.value = true
                 createPdfDocument()
             }
+
             else -> Unit
         }
 
@@ -121,10 +123,9 @@ class ScanningViewModel
 
             }
             creatingPdf.await()
-
             delay(3000L)
             showDialog.value = false
-            close.emit(true)
+            closeScanningScreen.emit(true)
 
         }
 
@@ -140,7 +141,7 @@ class ScanningViewModel
 
     fun clickImage(click: Boolean) {
         viewModelScope.launch {
-            clickImage.emit(click)
+            captureImage.emit(click)
 
             if (click) {
 

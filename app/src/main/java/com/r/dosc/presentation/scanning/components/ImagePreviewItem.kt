@@ -6,7 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.runtime.*
@@ -18,7 +19,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.r.dosc.domain.ui.theme.*
+import com.r.dosc.domain.ui.theme.GrayShade_dark
+import com.r.dosc.domain.ui.theme.Green_Shade
+import com.r.dosc.domain.ui.theme.White_Shade
 import com.r.dosc.presentation.scanning.ScanningScreenEvents
 import com.r.dosc.presentation.scanning.ScanningViewModel
 
@@ -66,6 +69,7 @@ fun ImagePreviewItem(
             },
         contentAlignment = Alignment.Center
     ) {
+
 
         AsyncImage(
             modifier = Modifier

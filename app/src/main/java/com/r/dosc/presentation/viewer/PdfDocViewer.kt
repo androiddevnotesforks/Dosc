@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +21,7 @@ import coil.imageLoader
 import com.r.dosc.domain.ui.theme.GrayShade_light
 import com.r.dosc.presentation.viewer.components.PdfListPages
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -29,6 +32,7 @@ import kotlin.math.sqrt
 @Destination
 @Composable
 fun PdfDocViewer(
+    navigator: DestinationsNavigator,
     file: File,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp)
 ) {
@@ -79,8 +83,16 @@ fun PdfDocViewer(
                         color = Color.White,
                     )
                 },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navigator.navigateUp()
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, "backIcon")
+                    }
+                }
             )
         },
+
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {

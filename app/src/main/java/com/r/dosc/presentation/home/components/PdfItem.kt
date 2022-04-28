@@ -43,8 +43,8 @@ fun PdfItem(
         Icon(
             modifier = Modifier
                 .weight(17f)
-                .size(40.dp),
-            painter = painterResource(id = R.drawable.ic_pdf_svg),
+                .size(25.dp),
+            painter = painterResource(id = R.drawable.ic_pdf_2),
             contentDescription = "icon",
             tint = Color.Unspecified
         )

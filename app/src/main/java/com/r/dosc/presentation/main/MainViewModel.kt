@@ -9,7 +9,10 @@ import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +21,7 @@ const val SETTINGS_SCREEN = "Settings"
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    var prefStorage: PreferenceStorage,
+    private val prefStorage: PreferenceStorage,
 ) : ViewModel() {
 
     private val _duration = MutableStateFlow(true)
@@ -40,7 +43,7 @@ class MainViewModel @Inject constructor(
             isDarkThemeState.value = prefStorage.isDarkTheme.first()
             isStartWithFileNameState.value = prefStorage.isStartWithFileName.first()
 
-            delay(100L)
+            delay(500L)
             _duration.value = false
 
         }

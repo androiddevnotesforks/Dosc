@@ -10,4 +10,5 @@ sealed class ScanningScreenEvents {
     object NavigateUp : ScanningScreenEvents()
     data class RemoveImage(val indx: Int) : ScanningScreenEvents()
 
+
 }
