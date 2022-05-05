@@ -44,8 +44,11 @@ fun HomeScreen(
         hasPermission = {
             if (homeViewModel.listOfPdfDocuments.isNotEmpty()) {
                 ShowPdfList(
-                    listOfPdfs = homeViewModel.listOfPdfDocuments,
-                    navigator
+                    listOfPdfs = homeViewModel.documentsSortByDate(),
+                    navigator = navigator,
+                    onClick = { ind ->
+                        homeViewModel.removeElement(ind)
+                    }
                 )
             } else {
                 OnEmptyState()

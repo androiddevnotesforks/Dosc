@@ -23,7 +23,11 @@ class HomeViewModel
         getAllPdfDocuments()
     }
 
-    private fun getAllPdfDocuments()  {
+    fun removeElement(index: Int) {
+        listOfPdfDocuments.removeAt(index)
+    }
+
+    private fun getAllPdfDocuments() {
         mainDirectory.listFiles()?.forEach { file ->
             val pdfDocumentDetails = PdfDocumentDetails(
                 documentName = file.name,
@@ -32,12 +36,19 @@ class HomeViewModel
                 docSize = getFileSize(file.length()),
                 dateCreated = getFileDate(file.lastModified()),
                 timestamp = 0L,
-                file= getPdfDocument(file.absolutePath)
+                file = getPdfDocument(file.absolutePath)
             )
             listOfPdfDocuments.add(pdfDocumentDetails)
         }
 
+    }
 
+    fun documentsSortByDate(): List<PdfDocumentDetails> = _listOfPdfDocuments.sortedWith(compareBy {
+        it.timestamp
+    }).reversed()
+
+    fun documentsSortByName(): List<PdfDocumentDetails> = _listOfPdfDocuments.sortedBy {
+        it.documentName
     }
 
     private fun getFileSize(length: Long): String {
@@ -50,11 +61,11 @@ class HomeViewModel
     }
 
     private fun getFileDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return sdf.format(timestamp)
     }
 
-    fun getPdfDocument(path: String?): File = File(path.toString())
+    private fun getPdfDocument(path: String?): File = File(path.toString())
 
 
 }

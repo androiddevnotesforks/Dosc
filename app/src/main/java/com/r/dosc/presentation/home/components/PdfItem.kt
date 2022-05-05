@@ -24,7 +24,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun PdfItem(
     pdfDocumentDetails: PdfDocumentDetails,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    onClick: () -> Unit
 ) {
     var clicked by remember {
         mutableStateOf(false)
@@ -82,12 +83,12 @@ fun PdfItem(
             contentAlignment = Alignment.CenterStart
         ) {
             IconButton(onClick = {
-
+                onClick()
             }) {
                 Icon(
                     modifier = Modifier.size(25.dp),
                     imageVector = Icons.Default.MoreVert,
-                    contentDescription = "",
+                    contentDescription = "more",
                     tint = GrayShade_dark
                 )
             }

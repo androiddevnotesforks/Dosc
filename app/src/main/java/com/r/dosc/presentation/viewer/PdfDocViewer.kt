@@ -60,7 +60,6 @@ fun PdfDocViewer(
             val input: ParcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             val error: ParcelFileDescriptor = ParcelFileDescriptor.open(viewerViewModel.getErrorFile(), ParcelFileDescriptor.MODE_READ_ONLY)
 
-
             value = try {
                 PdfRenderer(input)
             } catch (e: IOException) {
@@ -147,7 +146,7 @@ fun PdfDocViewer(
 
                     IconButton(
                         onClick = {
-                            orientation = false
+
                         }
 
                     ) {
@@ -238,7 +237,6 @@ fun PdfDocViewer(
                         mutex,
                         renderer,
                     )
-
                 }
             }
         }
