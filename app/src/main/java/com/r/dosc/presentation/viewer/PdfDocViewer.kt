@@ -4,22 +4,30 @@ import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.imageLoader
+import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.GrayShade_light
-import com.r.dosc.presentation.viewer.components.PdfListPages
+import com.r.dosc.domain.util.pageIndex
+import com.r.dosc.domain.util.pageIndexHorizontal
+import com.r.dosc.presentation.viewer.components.HorizontalPdfListPages
+import com.r.dosc.presentation.viewer.components.VerticalPdfListPages
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
+import java.io.IOException
 import kotlin.math.sqrt
 
 @Destination
@@ -34,9 +43,8 @@ import kotlin.math.sqrt
 fun PdfDocViewer(
     navigator: DestinationsNavigator,
     file: File,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp)
+    viewerViewModel: PdfDocViewerViewModel = hiltViewModel()
 ) {
-
     val docListState = rememberLazyListState()
 
     val topPadding by remember {
@@ -49,8 +57,17 @@ fun PdfDocViewer(
     val mutex = remember { Mutex() }
     val renderer by produceState<PdfRenderer?>(null, file) {
         rendererScope.launch(Dispatchers.IO) {
-            val input = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-            value = PdfRenderer(input)
+            val input: ParcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            val error: ParcelFileDescriptor = ParcelFileDescriptor.open(viewerViewModel.getErrorFile(), ParcelFileDescriptor.MODE_READ_ONLY)
+
+
+            value = try {
+                PdfRenderer(input)
+            } catch (e: IOException) {
+                println("pdf doc error here $e")
+                PdfRenderer(error)
+            }
+
         }
         awaitDispose {
             val currentRenderer = value
@@ -66,12 +83,19 @@ fun PdfDocViewer(
     val imageLoadingScope = rememberCoroutineScope()
     val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
 
+
+    var orientation by remember {
+        mutableStateOf(true)
+    }
+    //orientation true = vertical doc list view
+    //orientation false = Horizontal doc list view
+
     val pageCountText: String by remember {
         derivedStateOf {
-            docListState.pageIndex(pageCount)
-
+            if (orientation) docListState.pageIndex(pageCount) else docListState.pageIndexHorizontal()
         }
     }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -81,6 +105,8 @@ fun PdfDocViewer(
                     Text(
                         text = file.name,
                         color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
@@ -89,6 +115,48 @@ fun PdfDocViewer(
                     }) {
                         Icon(Icons.Filled.ArrowBack, "backIcon")
                     }
+                },
+                actions = {
+
+                    if (orientation) {
+                        IconButton(
+                            onClick = {
+                                orientation = false
+                            }
+
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_horizontal),
+                                contentDescription = "change_view_to_horizontal",
+                            )
+                        }
+                    } else {
+                        IconButton(
+                            onClick = {
+                                orientation = true
+
+                            }
+
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_vertical),
+                                contentDescription = "change_view_to_vertical",
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = {
+                            orientation = false
+                        }
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Share,
+                            contentDescription = "share_selected_document",
+                        )
+                    }
+
                 }
             )
         },
@@ -117,54 +185,63 @@ fun PdfDocViewer(
         }
     ) {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
             val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
             val height = (width * sqrt(2f)).toInt()
 
             Column(
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                Arrangement.Center
             ) {
 
-                AnimatedVisibility(visible = topPadding) {
+                if (orientation) {
+
+                    AnimatedVisibility(visible = topPadding) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                        )
+                    }
+
+                    VerticalPdfListPages(
+                        docListState,
+                        pageCount,
+                        height,
+                        file,
+                        context,
+                        imageLoader,
+                        imageLoadingScope,
+                        width,
+                        mutex,
+                        renderer,
+                    )
+
+                } else {
                     Spacer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp)
                     )
+
+                    HorizontalPdfListPages(
+                        docListState,
+                        pageCount,
+                        height,
+                        file,
+                        context,
+                        imageLoader,
+                        imageLoadingScope,
+                        width,
+                        mutex,
+                        renderer,
+                    )
+
                 }
-
-                PdfListPages(
-                    docListState,
-                    verticalArrangement,
-                    pageCount,
-                    height,
-                    file,
-                    context,
-                    imageLoader,
-                    imageLoadingScope,
-                    width,
-                    mutex,
-                    renderer,
-                )
-
             }
         }
     }
-
 }
 
-fun LazyListState.pageIndex(count: Int): String {
-    val lastItem = layoutInfo.visibleItemsInfo.lastOrNull()
-    if (lastItem != null) {
-        return if (lastItem.size + lastItem.offset <= layoutInfo.viewportEndOffset && isScrolledToEnd()) {
-            count.toString()
-        } else {
-            lastItem.index.toString()
-        }
-    }
-    return "1"
-}
-
-fun LazyListState.isScrolledToEnd() =
-    layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1

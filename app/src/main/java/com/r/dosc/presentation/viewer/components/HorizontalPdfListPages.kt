@@ -1,4 +1,5 @@
-@file:OptIn(ExperimentalSnapperApi::class)
+@file:OptIn(ExperimentalSnapperApi::class, ExperimentalSnapperApi::class)
+
 package com.r.dosc.presentation.viewer.components
 
 import android.content.Context
@@ -8,11 +9,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -30,12 +31,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
-import kotlin.math.sqrt
 
 @Composable
-fun PdfListPages(
+fun HorizontalPdfListPages(
     docListState: LazyListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
     pageCount: Int,
     height: Int,
     file: File,
@@ -44,12 +43,15 @@ fun PdfListPages(
     imageLoadingScope: CoroutineScope,
     width: Int,
     mutex: Mutex,
-    renderer:PdfRenderer?
+    renderer: PdfRenderer?
 ) {
-    LazyColumn(
-        verticalArrangement = verticalArrangement,
+
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         state = docListState,
-        flingBehavior = rememberSnapperFlingBehavior(docListState)
+        flingBehavior = rememberSnapperFlingBehavior(docListState),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         items(
             count = pageCount,
@@ -90,7 +92,6 @@ fun PdfListPages(
                 Box(
                     modifier = Modifier
                         .background(Color.White)
-                        .aspectRatio(1f / sqrt(2f))
                         .fillMaxWidth()
                 )
             } else {
@@ -103,7 +104,6 @@ fun PdfListPages(
                 Image(
                     modifier = Modifier
                         .background(Color.White)
-                        .aspectRatio(1f / sqrt(2f))
                         .fillMaxWidth(),
                     contentScale = ContentScale.Fit,
                     painter = rememberAsyncImagePainter(
@@ -115,4 +115,5 @@ fun PdfListPages(
             }
         }
     }
+
 }

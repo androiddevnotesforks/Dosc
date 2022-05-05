@@ -8,20 +8,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.r.dosc.domain.constants.Permissions
-import com.r.dosc.presentation.home.HomeScreenEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-import java.io.File
 import javax.inject.Inject
-import javax.inject.Named
 
 
 @ExperimentalPermissionsApi
 @HiltViewModel
-class PermissionViewModel @Inject constructor(
-    @Named("dosc") private val mainDirectory: File,
-) : ViewModel() {
+class PermissionViewModel @Inject constructor() : ViewModel() {
 
     val permissionsCamera: MutableState<Permissions> = mutableStateOf(Permissions.NOT_REQUESTED)
 
@@ -31,27 +24,10 @@ class PermissionViewModel @Inject constructor(
     val permissionsStorageWrite: MutableState<Permissions> =
         mutableStateOf(Permissions.NOT_REQUESTED)
 
-    private val _uiEvent = Channel<HomeScreenEvents>()
-    val uiEvent = _uiEvent.receiveAsFlow()
-
     val isStorageReadGranted = mutableStateOf(false)
     val isStorageWriteGranted = mutableStateOf(false)
 
-    val listOfPdfs = mutableListOf<File>()
 
-    init {
-        if (mainDirectory.exists()) {
-            listOfPdfs.removeAll(listOfPdfs)
-            listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
-        }
-    }
-
-    fun updateList() {
-        if (mainDirectory.exists()) {
-            listOfPdfs.removeAll(listOfPdfs)
-            listOfPdfs.addAll(mainDirectory.listFiles() as Array<File>)
-        }
-    }
 
 
     fun onPermissionState(permissionsState: MultiplePermissionsState) {

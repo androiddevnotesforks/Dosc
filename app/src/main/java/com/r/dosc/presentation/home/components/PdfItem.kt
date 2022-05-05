@@ -12,22 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.r.dosc.R
+import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.GrayShade_dark
 import com.r.dosc.presentation.destinations.PdfDocViewerDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun PdfItem(
-    file: File,
+    pdfDocumentDetails: PdfDocumentDetails,
     navigator: DestinationsNavigator
 ) {
-    var cliked by remember {
+    var clicked by remember {
         mutableStateOf(false)
     }
 
@@ -36,7 +35,7 @@ fun PdfItem(
             .fillMaxWidth()
             .height(70.dp)
             .clickable {
-                cliked = true
+                clicked = true
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -54,18 +53,24 @@ fun PdfItem(
         Column(
             modifier = Modifier.weight(66f)
         ) {
-            Text(text = file.name, fontSize = 19.sp)
+            Text(
+                text = pdfDocumentDetails.documentName, fontSize = 19.sp, maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
             Row {
                 Text(
-                    text = getFileDate(file.lastModified()),
+                    text = pdfDocumentDetails.dateCreated,
                     fontSize = 14.sp,
                     color = GrayShade_dark
                 )
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-                Text(text = getFileSize(file.length()), fontSize = 14.sp, color = GrayShade_dark)
+                Text(text = pdfDocumentDetails.docSize, fontSize = 14.sp, color = GrayShade_dark)
+
+                Spacer(modifier = Modifier.width(6.dp))
+
 
             }
 
@@ -91,23 +96,10 @@ fun PdfItem(
 
     }
 
-    if (cliked){
-        navigator.navigate(PdfDocViewerDestination(file = file))
-        cliked = false
+    if (clicked) {
+        navigator.navigate(PdfDocViewerDestination(file = pdfDocumentDetails.file))
+        clicked = false
     }
 
 }
 
-fun getFileSize(length: Long): String {
-    val size = (length / 1024)
-    return if (size < 1024) {
-        "$size kB"
-    } else {
-        "${(size / 1024)} MB"
-    }
-}
-
-fun getFileDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return sdf.format(timestamp)
-}

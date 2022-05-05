@@ -25,7 +25,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
-import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -43,7 +42,6 @@ fun ScanningCameraScreen(
     fileName: String = "",
     navigator: DestinationsNavigator,
     scanningViewModel: ScanningViewModel = hiltViewModel(),
-    permissionViewModel: PermissionViewModel
 ) {
 
     scanningViewModel.docName = fileName
@@ -81,7 +79,7 @@ fun ScanningCameraScreen(
 
 
     if (scanningViewModel.closeScanningScreen.collectAsState().value) {
-        permissionViewModel.updateList()
+
         navigator.navigateUp()
     }
 
@@ -123,12 +121,13 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
+//                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
+//                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+//                                    } else {
+//                                        navigator.navigateUp()
+//                                    }
+                                    scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
 
-                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
-                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-                                    } else {
-                                        navigator.navigateUp()
-                                    }
                                 }
 
                             ) {

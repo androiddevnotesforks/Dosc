@@ -88,15 +88,12 @@ class ScanningViewModel
                 showDialog.value = true
                 createPdfDocument()
             }
-
-            else -> Unit
         }
 
     }
 
     private fun createPdfDocument() {
         documentEssential.pdfWriter(iDocument, getFileName())
-
         iDocument.open()
 
         var count = 0
@@ -155,17 +152,21 @@ class ScanningViewModel
 
             }
             isClickedFirstTime.emit(CaptureButtonAnim.CLICKED)
-
-
         }
     }
-
 
     fun getTempOutputDirectory(): File = tempDirectory
 
     fun getCameraExecutor(): ExecutorService = cameraExecutor
 
     suspend fun getCameraProvider(): ProcessCameraProvider = camX.getCameraProvider()
+
+    private fun getFileName(): String = if (docName.isNotEmpty()) "$mainDirectory/${
+        checkFileExist(
+            docName,
+            0
+        )
+    }.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
 
     private fun checkFileExist(f: String, count: Int): String {
 
@@ -184,13 +185,6 @@ class ScanningViewModel
         }
 
     }
-
-    private fun getFileName(): String = if (docName.isNotEmpty()) "$mainDirectory/${
-        checkFileExist(
-            docName,
-            0
-        )
-    }.pdf" else "$mainDirectory/${getDefaultName()}.pdf"
 
     private fun getDefaultName(): String {
         val currentTime = System.currentTimeMillis()
