@@ -28,8 +28,6 @@ class PermissionViewModel @Inject constructor() : ViewModel() {
     val isStorageWriteGranted = mutableStateOf(false)
 
 
-
-
     fun onPermissionState(permissionsState: MultiplePermissionsState) {
         permissionsState.permissions.forEach { perm ->
             when (perm.permission) {

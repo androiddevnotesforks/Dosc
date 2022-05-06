@@ -27,6 +27,9 @@ class MainViewModel @Inject constructor(
     private val _duration = MutableStateFlow(true)
     val duration = _duration.asStateFlow()
 
+    private val _updateDocList = MutableStateFlow(false)
+    val updateDocList = _updateDocList.asStateFlow()
+
     private val _uiEvent = Channel<MainScreenEvents>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -110,12 +113,15 @@ class MainViewModel @Inject constructor(
         prefStorage.setIsDarkTheme(isDarkTheme)
     }
 
-
     private suspend fun setStartWithFileName(isStartWithFileName: Boolean) {
         isStartWithFileNameState.value = isStartWithFileName
         prefStorage.setIsStartWithFileName(isStartWithFileName = isStartWithFileName)
     }
 
-
+    fun updateDocList(isUpdate: Boolean) {
+        viewModelScope.launch {
+            _updateDocList.emit(isUpdate)
+        }
+    }
 
 }

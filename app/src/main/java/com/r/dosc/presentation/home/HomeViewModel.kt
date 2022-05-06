@@ -43,6 +43,13 @@ class HomeViewModel
 
     }
 
+    fun updateDocList() {
+        _listOfPdfDocuments.removeAll(_listOfPdfDocuments)
+        getAllPdfDocuments()
+    }
+
+
+
     fun documentsSortByDate(): List<PdfDocumentDetails> = _listOfPdfDocuments.sortedWith(compareBy {
         it.timestamp
     }).reversed()

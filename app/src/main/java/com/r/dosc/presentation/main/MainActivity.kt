@@ -28,6 +28,7 @@ import com.r.dosc.domain.navigation.BottomBar
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
 import com.r.dosc.domain.util.PermissionViewModel
+import com.r.dosc.domain.util.showSnackBar
 import com.r.dosc.presentation.NavGraphs
 import com.r.dosc.presentation.destinations.HomeScreenDestination
 import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
@@ -39,8 +40,6 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.navigation.navigateTo
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @ExperimentalPermissionsApi
 @ExperimentalAnimationApi
@@ -163,10 +162,8 @@ class MainActivity : ComponentActivity() {
                                     dependency(mainViewModel)
                                 }
                                 if (destination is ScanningCameraScreenDestination) {
-                                    dependency(permissionViewModel)
+                                    dependency(mainViewModel)
                                 }
-
-
                             }
                         )
                     }
@@ -201,7 +198,7 @@ class MainActivity : ComponentActivity() {
                             when (event) {
                                 is MainScreenEvents.ShowSnackBar -> {
                                     showSnackBar(
-                                        event,
+                                        event.uiText,
                                         scaffoldState,
                                         coroutineScope
                                     )
@@ -226,18 +223,7 @@ private fun shouldShowBottomNavBarTopBarFloatBtn(backstackEntry: NavBackStackEnt
 }
 
 
-fun showSnackBar(
-    event: MainScreenEvents.ShowSnackBar,
-    scaffoldState: ScaffoldState,
-    coroutineScope: CoroutineScope,
-) {
-    coroutineScope.launch {
 
-        scaffoldState.snackbarHostState.showSnackbar(
-            message = event.uiText
-        )
-    }
-}
 
 
 

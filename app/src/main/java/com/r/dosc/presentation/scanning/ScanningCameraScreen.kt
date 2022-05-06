@@ -25,12 +25,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
+import com.r.dosc.domain.util.showSnackBar
+import com.r.dosc.presentation.main.MainViewModel
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 
@@ -42,6 +42,7 @@ fun ScanningCameraScreen(
     fileName: String = "",
     navigator: DestinationsNavigator,
     scanningViewModel: ScanningViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
 ) {
 
     scanningViewModel.docName = fileName
@@ -63,7 +64,6 @@ fun ScanningCameraScreen(
                         color = DarkColorPalette.primarySurface
                     )
                 }
-
             }
             lifecycleOwner.lifecycle.addObserver(observer)
 
@@ -79,7 +79,7 @@ fun ScanningCameraScreen(
 
 
     if (scanningViewModel.closeScanningScreen.collectAsState().value) {
-
+        mainViewModel.updateDocList(true)
         navigator.navigateUp()
     }
 
@@ -121,12 +121,11 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-//                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
-//                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-//                                    } else {
-//                                        navigator.navigateUp()
-//                                    }
-                                    scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
+                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+                                    } else {
+                                        navigator.navigateUp()
+                                    }
 
                                 }
 
@@ -184,7 +183,6 @@ fun ScanningCameraScreen(
                         }
                     }
                 }
-
 
                 //bottom of scanning screen
                 Column(
@@ -309,15 +307,4 @@ fun ScanningCameraScreen(
 }
 
 
-fun showSnackBar(
-    message: String,
-    scaffoldState: ScaffoldState,
-    coroutineScope: CoroutineScope,
-) {
-    coroutineScope.launch {
-        scaffoldState.snackbarHostState.showSnackbar(
-            message = message,
-            actionLabel = "Dismiss"
-        )
-    }
-}
+

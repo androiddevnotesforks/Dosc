@@ -38,13 +38,26 @@ fun HomeScreen(
         rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 
-    ReadDirectory(
+
+    LaunchedEffect(Unit) {
+        mainViewModel.updateDocList.collect { isUpdate ->
+            if (isUpdate) {
+                homeViewModel.updateDocList()
+                mainViewModel.updateDocList(false)
+            }
+
+        }
+    }
+
+
+
+        ReadDirectory(
         permissionViewModel = permissionViewModel,
         readPermissionState = readPermissionState,
         hasPermission = {
             if (homeViewModel.listOfPdfDocuments.isNotEmpty()) {
                 ShowPdfList(
-                    listOfPdfs = homeViewModel.documentsSortByDate(),
+                    listOfPdfs = homeViewModel.listOfPdfDocuments,
                     navigator = navigator,
                     onClick = { ind ->
                         homeViewModel.removeElement(ind)
