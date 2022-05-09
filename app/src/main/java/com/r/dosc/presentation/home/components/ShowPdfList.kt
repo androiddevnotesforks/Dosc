@@ -9,29 +9,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.Helper_Text_Color
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.io.File
 
 @Composable
 fun ShowPdfList(
     listOfPdfs: List<PdfDocumentDetails>,
-    navigator: DestinationsNavigator,
-    onClick: (Int) -> Unit
-
+    onDelete: (Int) -> Unit,
+    onShare: (File) -> Unit,
+    openDocument: (PdfDocumentDetails, Int) -> Unit
 ) {
 
     Column(
         modifier = Modifier.padding(bottom = 56.dp)
     ) {
-
         HelperTabLayout()
         LazyColumn {
             listOfPdfs.forEachIndexed { index, pdfDocumentDetails ->
                 item {
                     PdfItem(
                         pdfDocumentDetails,
-                        navigator,
-                        onClick = {
-                            onClick(index)
+                        onDelete = {
+                            onDelete(index)
+                        },
+                        onShare = { file ->
+                            onShare(file)
+                        },
+                        openDocument = { doc ->
+                            openDocument(doc, index)
                         }
                     )
                     Divider(

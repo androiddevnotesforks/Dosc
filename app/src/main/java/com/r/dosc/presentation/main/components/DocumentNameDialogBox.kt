@@ -14,7 +14,7 @@ import com.r.dosc.presentation.main.MainScreenEvents
 import com.r.dosc.presentation.main.MainViewModel
 
 @Composable
-fun OpenDialogBox(
+fun DocumentNameDialogBox(
     viewModel: MainViewModel,
     onSubmit: (String) -> Unit
 ) {
@@ -23,7 +23,6 @@ fun OpenDialogBox(
     AlertDialog(
         onDismissRequest = {
             viewModel.onEvent(MainScreenEvents.OpenDialog(false))
-
         },
         title = {
             Text(

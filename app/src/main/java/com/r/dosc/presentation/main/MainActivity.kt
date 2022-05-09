@@ -31,9 +31,11 @@ import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.domain.util.showSnackBar
 import com.r.dosc.presentation.NavGraphs
 import com.r.dosc.presentation.destinations.HomeScreenDestination
+import com.r.dosc.presentation.destinations.PdfDocViewerDestination
 import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
 import com.r.dosc.presentation.destinations.SettingsScreenDestination
-import com.r.dosc.presentation.main.components.OpenDialogBox
+import com.r.dosc.presentation.home.HomeViewModel
+import com.r.dosc.presentation.main.components.DocumentNameDialogBox
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.r.dosc.presentation.main.components.SetupPermissions
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -66,7 +68,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    //viewModels
                     val permissionViewModel: PermissionViewModel by viewModels()
+                    val homeViewModel: HomeViewModel by viewModels()
+
+                    //permission
                     SetupPermissions(permissionViewModel)
                     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
@@ -88,7 +94,6 @@ class MainActivity : ComponentActivity() {
 
                     navController.addOnDestinationChangedListener(listener = { _, dest, _ ->
                         mainViewModel.onEvent(MainScreenEvents.TopAppBarTitle(dest.route))
-
                     })
 
                     Scaffold(
@@ -157,12 +162,16 @@ class MainActivity : ComponentActivity() {
                                 if (destination is HomeScreenDestination) {
                                     dependency(permissionViewModel)
                                     dependency(mainViewModel)
+                                    dependency(homeViewModel)
                                 }
                                 if (destination is SettingsScreenDestination) {
                                     dependency(mainViewModel)
                                 }
                                 if (destination is ScanningCameraScreenDestination) {
                                     dependency(mainViewModel)
+                                }
+                                if (destination is PdfDocViewerDestination) {
+                                    dependency(homeViewModel)
                                 }
                             }
                         )
@@ -181,13 +190,12 @@ class MainActivity : ComponentActivity() {
 
 
                     if (mainViewModel.isOpenDialogBox.value) {
-                        OpenDialogBox(
+                        DocumentNameDialogBox(
                             viewModel = mainViewModel,
                             onSubmit = { fileName ->
-                                navController.navigateTo(ScanningCameraScreenDestination(fileName)) {
+                                navController.navigateTo(ScanningCameraScreenDestination(fileName.trim())) {
                                     launchSingleTop = true
                                     popUpTo(HomeScreenDestination.route)
-
                                 }
                             }
                         )

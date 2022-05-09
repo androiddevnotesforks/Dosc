@@ -1,14 +1,18 @@
 package com.r.dosc.presentation.viewer
 
+import android.content.Intent
 import android.graphics.pdf.PdfRenderer
+import android.net.Uri
 import android.os.ParcelFileDescriptor
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,8 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.imageLoader
 import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.GrayShade_light
+import com.r.dosc.domain.util.getPdfUri
 import com.r.dosc.domain.util.pageIndex
 import com.r.dosc.domain.util.pageIndexHorizontal
+import com.r.dosc.presentation.home.HomeViewModel
 import com.r.dosc.presentation.viewer.components.HorizontalPdfListPages
 import com.r.dosc.presentation.viewer.components.VerticalPdfListPages
 import com.ramcosta.composedestinations.annotation.Destination
@@ -41,9 +47,11 @@ import kotlin.math.sqrt
 @Destination
 @Composable
 fun PdfDocViewer(
+    isDarkTheme: Boolean = true,
     navigator: DestinationsNavigator,
     file: File,
-    viewerViewModel: PdfDocViewerViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel,
+    viewerViewModel: PdfDocViewerViewModel = hiltViewModel(),
 ) {
     val docListState = rememberLazyListState()
 
@@ -57,13 +65,16 @@ fun PdfDocViewer(
     val mutex = remember { Mutex() }
     val renderer by produceState<PdfRenderer?>(null, file) {
         rendererScope.launch(Dispatchers.IO) {
-            val input: ParcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            val input = if (file.exists()) {
+                ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            } else {
+                ParcelFileDescriptor.open(viewerViewModel.getErrorFile(), ParcelFileDescriptor.MODE_READ_ONLY)
+            }
             val error: ParcelFileDescriptor = ParcelFileDescriptor.open(viewerViewModel.getErrorFile(), ParcelFileDescriptor.MODE_READ_ONLY)
 
             value = try {
                 PdfRenderer(input)
             } catch (e: IOException) {
-                println("pdf doc error here $e")
                 PdfRenderer(error)
             }
 
@@ -98,6 +109,7 @@ fun PdfDocViewer(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        backgroundColor = if(isSystemInDarkTheme() || isDarkTheme) Color.DarkGray else Color.LightGray,
         topBar = {
             TopAppBar(
                 title = {
@@ -116,6 +128,20 @@ fun PdfDocViewer(
                     }
                 },
                 actions = {
+
+                    IconButton(
+                        onClick = {
+                            viewerViewModel.deleteDocument(file)
+                            homeViewModel.updateDocList()
+                            navigator.navigateUp()
+                        }
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Delete,
+                            contentDescription = "delete_document",
+                        )
+                    }
 
                     if (orientation) {
                         IconButton(
@@ -146,6 +172,17 @@ fun PdfDocViewer(
 
                     IconButton(
                         onClick = {
+
+                            val pdfUri: Uri = file.getPdfUri(context)
+
+                            val shareDocument = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_STREAM, pdfUri)
+                                type = "application/pdf"
+                            }
+
+                            val share = Intent.createChooser(shareDocument, "share_pdf_document")
+                            context.startActivity(share)
 
                         }
 

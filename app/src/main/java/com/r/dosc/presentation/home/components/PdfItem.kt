@@ -16,18 +16,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.r.dosc.R
+import com.r.dosc.domain.components.DropDownMenu
 import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.presentation.destinations.PdfDocViewerDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.r.dosc.domain.util.HomeListItemDropDownMenu
+import java.io.File
+
 
 @Composable
 fun PdfItem(
     pdfDocumentDetails: PdfDocumentDetails,
-    navigator: DestinationsNavigator,
-    onClick: () -> Unit
+    onDelete: () -> Unit,
+    onShare: (File) -> Unit,
+    openDocument: (PdfDocumentDetails) -> Unit
 ) {
-    var clicked by remember {
+
+    var showDropDown by remember {
         mutableStateOf(false)
     }
 
@@ -36,7 +40,7 @@ fun PdfItem(
             .fillMaxWidth()
             .height(70.dp)
             .clickable {
-                clicked = true
+                openDocument(pdfDocumentDetails)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -72,10 +76,16 @@ fun PdfItem(
 
                 Spacer(modifier = Modifier.width(6.dp))
 
+                if (pdfDocumentDetails.noOfPages.toInt() > 0) {
+                    Text(
+                        text = "${pdfDocumentDetails.noOfPages} pages",
+                        fontSize = 13.sp,
+                        color = GrayShade_dark
+                    )
+
+                }
 
             }
-
-
         }
 
         Box(
@@ -83,7 +93,8 @@ fun PdfItem(
             contentAlignment = Alignment.CenterStart
         ) {
             IconButton(onClick = {
-                onClick()
+                showDropDown = true
+
             }) {
                 Icon(
                     modifier = Modifier.size(25.dp),
@@ -91,16 +102,28 @@ fun PdfItem(
                     contentDescription = "more",
                     tint = GrayShade_dark
                 )
+
+                if (showDropDown) {
+                    DropDownMenu(
+                        modifier = Modifier,
+                        onDismissRequest = {
+                            showDropDown = false
+                        },
+                        onSelected = { item ->
+                            showDropDown = false
+                            when (item) {
+                                is HomeListItemDropDownMenu.Delete -> {
+                                    onDelete()
+                                }
+                                is HomeListItemDropDownMenu.Share -> {
+                                    onShare(pdfDocumentDetails.file)
+                                }
+                            }
+                        }
+                    )
+                }
             }
-
         }
-
     }
-
-    if (clicked) {
-        navigator.navigate(PdfDocViewerDestination(file = pdfDocumentDetails.file))
-        clicked = false
-    }
-
 }
 

@@ -2,13 +2,21 @@ package com.r.dosc.presentation.home
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.itextpdf.text.pdf.PdfReader
 import com.r.dosc.domain.models.PdfDocumentDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
+
 
 @HiltViewModel
 class HomeViewModel
@@ -19,11 +27,26 @@ class HomeViewModel
     private val _listOfPdfDocuments = mutableStateListOf<PdfDocumentDetails>()
     val listOfPdfDocuments = _listOfPdfDocuments
 
+    private val _uiEvent = Channel<HomeScreenEvents>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    val showDialog = MutableStateFlow(false)
+
+
     init {
         getAllPdfDocuments()
     }
 
-    fun removeElement(index: Int) {
+    fun showDialog(show: Boolean){
+        viewModelScope.launch {
+            showDialog.emit(show)
+        }
+    }
+
+
+    fun deleteDocument(index: Int) {
+        val file = File("${_listOfPdfDocuments[index].filePath}")
+        file.deleteRecursively()
         listOfPdfDocuments.removeAt(index)
     }
 
@@ -32,7 +55,7 @@ class HomeViewModel
             val pdfDocumentDetails = PdfDocumentDetails(
                 documentName = file.name,
                 filePath = file.absolutePath,
-                noOfPages = "0",
+                noOfPages = getNoOfDocPages(file),
                 docSize = getFileSize(file.length()),
                 dateCreated = getFileDate(file.lastModified()),
                 timestamp = 0L,
@@ -49,15 +72,6 @@ class HomeViewModel
     }
 
 
-
-    fun documentsSortByDate(): List<PdfDocumentDetails> = _listOfPdfDocuments.sortedWith(compareBy {
-        it.timestamp
-    }).reversed()
-
-    fun documentsSortByName(): List<PdfDocumentDetails> = _listOfPdfDocuments.sortedBy {
-        it.documentName
-    }
-
     private fun getFileSize(length: Long): String {
         val size = (length / 1024)
         return if (size < 1024) {
@@ -73,6 +87,19 @@ class HomeViewModel
     }
 
     private fun getPdfDocument(path: String?): File = File(path.toString())
+
+    private fun getNoOfDocPages(file: File): String {
+        return try {
+            val pdfReader = PdfReader(file.absolutePath)
+            pdfReader.numberOfPages.toString()
+
+        } catch (e: InvocationTargetException) {
+            ""
+        } catch (e: Exception) {
+            ""
+        }
+
+    }
 
 
 }

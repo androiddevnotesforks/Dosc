@@ -1,4 +1,4 @@
-package com.r.dosc.presentation.home.components
+package com.r.dosc.domain.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -6,6 +6,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.r.dosc.domain.constants.Permissions
 import com.r.dosc.domain.util.PermissionViewModel
+import com.r.dosc.presentation.home.components.OnEmptyState
 
 @ExperimentalPermissionsApi
 @Composable

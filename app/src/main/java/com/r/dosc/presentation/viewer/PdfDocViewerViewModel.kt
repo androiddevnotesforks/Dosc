@@ -54,6 +54,10 @@ class PdfDocViewerViewModel
 
     fun getErrorFile(): File = File("$tempDirectory/temp_error/error.pdf")
 
+    fun deleteDocument(file: File) {
+        file.deleteRecursively()
+    }
+
     override fun onCleared() {
         super.onCleared()
         File("$tempDirectory/temp_error").deleteRecursively()
