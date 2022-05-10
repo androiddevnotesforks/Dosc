@@ -55,7 +55,7 @@ class HomeViewModel
             val pdfDocumentDetails = PdfDocumentDetails(
                 documentName = file.name,
                 filePath = file.absolutePath,
-                noOfPages = getNoOfDocPages(file),
+                noOfPages = "",
                 docSize = getFileSize(file.length()),
                 dateCreated = getFileDate(file.lastModified()),
                 timestamp = 0L,

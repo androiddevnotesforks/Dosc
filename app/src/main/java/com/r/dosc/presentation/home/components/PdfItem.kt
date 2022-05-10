@@ -76,14 +76,14 @@ fun PdfItem(
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-                if (pdfDocumentDetails.noOfPages.toInt() > 0) {
-                    Text(
-                        text = "${pdfDocumentDetails.noOfPages} pages",
-                        fontSize = 13.sp,
-                        color = GrayShade_dark
-                    )
-
-                }
+//                if (pdfDocumentDetails.noOfPages.toInt() > 0) {
+//                    Text(
+//                        text = "${pdfDocumentDetails.noOfPages} pages",
+//                        fontSize = 13.sp,
+//                        color = GrayShade_dark
+//                    )
+//
+//                }
 
             }
         }
