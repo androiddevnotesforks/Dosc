@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DeleteDialogBox(
-    isShowDialog: Boolean,
+    onDelete:  () -> Unit,
     onDismissRequest: () -> Unit,
-    ) {
-    var showDialog by remember { mutableStateOf(isShowDialog) }
+) {
+    var showDialog by remember { mutableStateOf(true) }
     if (showDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -32,8 +32,6 @@ fun DeleteDialogBox(
                         fontWeight = FontWeight.Bold,
                     )
                 }
-
-
             },
             text = {
                 Column(
@@ -74,8 +72,8 @@ fun DeleteDialogBox(
                             .padding(start = 6.dp, end = 12.dp),
                         onClick = {
                             showDialog = false
+                            onDelete()
                             onDismissRequest()
-
 
                         },
                     ) {

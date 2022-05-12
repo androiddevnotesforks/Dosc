@@ -14,12 +14,19 @@ val itemList = listOf(
 
 @Composable
 fun DropDownMenu(
+    expanded: Boolean,
+    onDeleteCheck:Boolean,
     modifier: Modifier,
     onDismissRequest: () -> Unit,
-    onSelected: (HomeListItemDropDownMenu) -> Unit,
+    onShare: () -> Unit,
+    onDelete: @Composable (HomeListItemDropDownMenu) -> Unit,
 ) {
     var isExpanded by remember {
-        mutableStateOf(true)
+        mutableStateOf(expanded)
+    }
+
+    var onDeleteClicked by remember {
+        mutableStateOf(onDeleteCheck)
     }
 
     DropdownMenu(
@@ -27,7 +34,6 @@ fun DropDownMenu(
         expanded = isExpanded,
         onDismissRequest = {
             isExpanded = false
-
             onDismissRequest()
         }
     ) {
@@ -35,8 +41,21 @@ fun DropDownMenu(
         itemList.forEach { item ->
             DropdownMenuItem(
                 onClick = {
-                    isExpanded = false
-                    onSelected(item)
+                    when (item) {
+                        is HomeListItemDropDownMenu.Share -> {
+                            onShare()
+                            isExpanded = false
+
+                            onDismissRequest()
+
+                        }
+                        is HomeListItemDropDownMenu.Delete -> {
+                            onDeleteClicked = true
+
+                        }
+                    }
+
+
                 },
             ) {
                 Text(text = item.name)
@@ -46,4 +65,10 @@ fun DropDownMenu(
 
     }
 
+    if (onDeleteClicked) {
+        onDelete(HomeListItemDropDownMenu.Delete())
+
+    }
+
 }
+

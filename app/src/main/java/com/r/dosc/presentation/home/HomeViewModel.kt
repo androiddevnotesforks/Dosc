@@ -1,6 +1,8 @@
 package com.r.dosc.presentation.home
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itextpdf.text.pdf.PdfReader
@@ -8,6 +10,8 @@ import com.r.dosc.domain.models.PdfDocumentDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -27,27 +31,31 @@ class HomeViewModel
     private val _listOfPdfDocuments = mutableStateListOf<PdfDocumentDetails>()
     val listOfPdfDocuments = _listOfPdfDocuments
 
-    private val _uiEvent = Channel<HomeScreenEvents>()
-    val uiEvent = _uiEvent.receiveAsFlow()
-
-    val showDialog = MutableStateFlow(false)
+    val dismissDropDown = mutableStateOf(false)
 
 
     init {
         getAllPdfDocuments()
     }
 
-    fun showDialog(show: Boolean){
-        viewModelScope.launch {
-            showDialog.emit(show)
+    fun onEvent(events: HomeScreenEvents) {
+        when (events) {
+            is HomeScreenEvents.DismissDropDown -> {
+                setDismissDropDown(events.dismiss)
+            }
         }
     }
 
+    private fun setDismissDropDown(open: Boolean) {
+        dismissDropDown.value = open
+    }
 
-    fun deleteDocument(index: Int) {
-        val file = File("${_listOfPdfDocuments[index].filePath}")
-        file.deleteRecursively()
-        listOfPdfDocuments.removeAt(index)
+    fun deleteDocument(index: Int?) {
+        if (index != null) {
+            val file = File("${_listOfPdfDocuments[index].filePath}")
+            file.deleteRecursively()
+            listOfPdfDocuments.removeAt(index)
+        }
     }
 
     private fun getAllPdfDocuments() {

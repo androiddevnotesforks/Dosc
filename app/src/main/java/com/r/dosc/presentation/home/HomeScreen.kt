@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -46,7 +45,6 @@ fun HomeScreen(
         rememberPermissionState(permission = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 
-
     LaunchedEffect(true) {
         mainViewModel.updateDocList.collect { isUpdate ->
             if (isUpdate) {
@@ -54,8 +52,6 @@ fun HomeScreen(
                 mainViewModel.updateDocList(false)
             }
         }
-
-
     }
 
     ReadDirectory(
@@ -64,10 +60,15 @@ fun HomeScreen(
         hasPermission = {
             if (homeViewModel.listOfPdfDocuments.isNotEmpty()) {
                 ShowPdfList(
+                    homeViewModel = homeViewModel,
                     listOfPdfs = homeViewModel.listOfPdfDocuments,
-                    onDelete = { indx ->
-                        homeViewModel.showDialog(true)
-                        //homeViewModel.deleteDocument(indx)
+                    openDocument = { doc, _ ->
+                        navigator.navigate(
+                            direction = PdfDocViewerDestination(
+                                isDarkTheme = mainViewModel.isDarkThemeState.value,
+                                file = doc.file,
+                            )
+                        )
                     },
                     onShare = { file ->
                         val pdfUri: Uri = file.getPdfUri(context)
@@ -82,12 +83,14 @@ fun HomeScreen(
                         context.startActivity(share)
 
                     },
-                    openDocument = { doc, indx ->
-                        navigator.navigate(
-                            direction = PdfDocViewerDestination(
-                                isDarkTheme = mainViewModel.isDarkThemeState.value,
-                                file = doc.file,
-                            )
+                    onDelete = { indx ->
+                        DeleteDialogBox(
+                            onDelete = {
+                                homeViewModel.deleteDocument(indx)
+                            },
+                            onDismissRequest = {
+                                homeViewModel.onEvent(HomeScreenEvents.DismissDropDown(true))
+                            }
                         )
                     }
                 )
@@ -96,16 +99,6 @@ fun HomeScreen(
             }
         },
     )
-
-    if (homeViewModel.showDialog.collectAsState().value) {
-        DeleteDialogBox(
-            isShowDialog = homeViewModel.showDialog.collectAsState().value,
-            onDismissRequest = {
-                homeViewModel.showDialog(false)
-
-            }
-        )
-    }
 
     when (permissionViewModel.permissionsStorageWrite.value) {
         Permissions.SHOULD_SHOW_RATIONAL -> {

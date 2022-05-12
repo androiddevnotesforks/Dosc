@@ -19,14 +19,16 @@ import com.r.dosc.R
 import com.r.dosc.domain.components.DropDownMenu
 import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.domain.util.HomeListItemDropDownMenu
+import com.r.dosc.presentation.home.HomeScreenEvents
+import com.r.dosc.presentation.home.HomeViewModel
 import java.io.File
 
 
 @Composable
 fun PdfItem(
+    homeViewModel: HomeViewModel,
     pdfDocumentDetails: PdfDocumentDetails,
-    onDelete: () -> Unit,
+    onDelete: @Composable () -> Unit,
     onShare: (File) -> Unit,
     openDocument: (PdfDocumentDetails) -> Unit
 ) {
@@ -76,15 +78,6 @@ fun PdfItem(
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-//                if (pdfDocumentDetails.noOfPages.toInt() > 0) {
-//                    Text(
-//                        text = "${pdfDocumentDetails.noOfPages} pages",
-//                        fontSize = 13.sp,
-//                        color = GrayShade_dark
-//                    )
-//
-//                }
-
             }
         }
 
@@ -92,38 +85,44 @@ fun PdfItem(
             modifier = Modifier.weight(16f),
             contentAlignment = Alignment.CenterStart
         ) {
-            IconButton(onClick = {
-                showDropDown = true
-
-            }) {
+            IconButton(
+                onClick = {
+                    showDropDown = true
+                }
+            ) {
                 Icon(
                     modifier = Modifier.size(25.dp),
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "more",
                     tint = GrayShade_dark
                 )
-
                 if (showDropDown) {
                     DropDownMenu(
+                        expanded = showDropDown,
+                        onDeleteCheck = false,
                         modifier = Modifier,
+                        onShare = {
+                            onShare(pdfDocumentDetails.file)
+
+                        },
+                        onDelete = {
+                            onDelete()
+
+                        },
                         onDismissRequest = {
                             showDropDown = false
-                        },
-                        onSelected = { item ->
-                            showDropDown = false
-                            when (item) {
-                                is HomeListItemDropDownMenu.Delete -> {
-                                    onDelete()
-                                }
-                                is HomeListItemDropDownMenu.Share -> {
-                                    onShare(pdfDocumentDetails.file)
-                                }
-                            }
                         }
                     )
                 }
             }
         }
     }
+
+    if (homeViewModel.dismissDropDown.value) {
+        showDropDown = false
+        homeViewModel.onEvent(HomeScreenEvents.DismissDropDown(false))
+
+    }
+
 }
 

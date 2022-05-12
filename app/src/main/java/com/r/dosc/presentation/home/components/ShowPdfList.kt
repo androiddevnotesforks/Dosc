@@ -9,14 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.Helper_Text_Color
+import com.r.dosc.presentation.home.HomeViewModel
 import java.io.File
 
 @Composable
 fun ShowPdfList(
+    homeViewModel: HomeViewModel,
     listOfPdfs: List<PdfDocumentDetails>,
-    onDelete: (Int) -> Unit,
+    openDocument: (PdfDocumentDetails, Int) -> Unit,
     onShare: (File) -> Unit,
-    openDocument: (PdfDocumentDetails, Int) -> Unit
+    onDelete: @Composable (Int) -> Unit
 ) {
 
     Column(
@@ -27,7 +29,8 @@ fun ShowPdfList(
             listOfPdfs.forEachIndexed { index, pdfDocumentDetails ->
                 item {
                     PdfItem(
-                        pdfDocumentDetails,
+                        homeViewModel = homeViewModel,
+                        pdfDocumentDetails = pdfDocumentDetails,
                         onDelete = {
                             onDelete(index)
                         },
@@ -45,8 +48,7 @@ fun ShowPdfList(
                     )
                 }
             }
-
         }
-
     }
+
 }
