@@ -120,13 +120,13 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    //scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+                                    scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
 
-                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
-                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-                                    } else {
-                                        navigator.navigateUp()
-                                    }
+//                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
+//                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+//                                    } else {
+//                                        navigator.navigateUp()
+//                                    }
 
                                 }
 
