@@ -77,7 +77,6 @@ fun ScanningCameraScreen(
 
     val screenUiEvents by scanningViewModel.uiEvent.collectAsState(ScanningScreenEvents.CameraScreen)
 
-
     if (scanningViewModel.closeScanningScreen.collectAsState().value) {
         mainViewModel.updateDocList(true)
         navigator.navigateUp()
@@ -121,6 +120,8 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
+                                    //scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+
                                     if (scanningViewModel.listOfImages.isNotEmpty()) {
                                         scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
                                     } else {

@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.systemuicontroller.SystemUiController
-import com.r.dosc.domain.ui.theme.Ocean_Green
+import com.r.dosc.domain.ui.theme.Ocean_Red
 import com.r.dosc.presentation.main.MainScreenEvents
 import com.r.dosc.presentation.main.MainViewModel
 
@@ -28,7 +28,7 @@ fun SetUpStatusBar(
         )
     } else {
         systemUiController.setStatusBarColor(
-            color = Ocean_Green
+            color = Ocean_Red
         )
         systemUiController.setNavigationBarColor(
             color = MaterialTheme.colors.surface
@@ -60,7 +60,7 @@ fun SetUpStatusBar(
             )
         } else {
             systemUiController.setStatusBarColor(
-                color = Ocean_Green
+                color = Ocean_Red
             )
             systemUiController.setNavigationBarColor(
                 color = MaterialTheme.colors.surface

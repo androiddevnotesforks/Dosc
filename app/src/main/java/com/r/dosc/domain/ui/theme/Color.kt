@@ -4,7 +4,8 @@ import androidx.compose.ui.graphics.Color
 
 
 val Salem = Color(0xFF42506B)
-val Ocean_Green = Color(0xFFEF4B4C)
+val Ocean_Red = Color(0xFFEF4B4C)
+val Ocean_Red_2 = Color(0xFFD84343)
 val Desert_Storm = Color(0xFF3E619B)
 
 val Helper_Text_Color = Color(0xFFAFA7AF)
