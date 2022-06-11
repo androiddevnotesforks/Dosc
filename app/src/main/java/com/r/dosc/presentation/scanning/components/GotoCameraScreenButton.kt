@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.r.dosc.domain.ui.theme.GrayShade_light
-import com.r.dosc.domain.ui.theme.Green_Shade
+import com.r.dosc.domain.ui.theme.Ocean_Red_2
 
 @Composable
 fun GotoCameraScreenButton(
@@ -22,7 +22,7 @@ fun GotoCameraScreenButton(
     onClick: () -> Unit
 ) {
 
-    val color = if (isScanningMode) Green_Shade else GrayShade_light
+    val color = if (isScanningMode) Ocean_Red_2 else GrayShade_light
 
     Box(
         modifier = Modifier

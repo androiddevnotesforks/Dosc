@@ -39,7 +39,6 @@ fun DeleteDialogBox(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(text = "This will delete your document permanently \nAre you sure?",fontSize = 16.sp,)
-
                 }
             },
             buttons = {

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.r.dosc.domain.ui.theme.GrayShade_dark
 import com.r.dosc.domain.ui.theme.Green_Shade
+import com.r.dosc.domain.ui.theme.Ocean_Red_2
 import com.r.dosc.domain.ui.theme.White_Shade
 import com.r.dosc.presentation.scanning.ScanningScreenEvents
 import com.r.dosc.presentation.scanning.ScanningViewModel
@@ -45,7 +46,7 @@ fun ImagePreviewItem(
             isSelected = when (uiEvent) {
                 is ScanningScreenEvents.OpenDocPreview -> {
                     if (uiEvent.indx == count - 1) {
-                        Green_Shade
+                        Ocean_Red_2
                     } else {
                         Color.LightGray
                     }

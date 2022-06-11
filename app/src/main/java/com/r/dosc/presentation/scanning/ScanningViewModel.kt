@@ -86,7 +86,7 @@ class ScanningViewModel
             }
             ScanningScreenEvents.SavePdf -> {
                 showDialog.value = true
-                //createPdfDocument()
+                createPdfDocument()
             }
         }
 

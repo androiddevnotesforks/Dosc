@@ -33,11 +33,11 @@ fun EditImage(
             crop()
         })
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         EditItem(R.drawable.ic_black_white, "Theme")
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
         EditItem(R.drawable.ic_rotate, "Rotate")
 

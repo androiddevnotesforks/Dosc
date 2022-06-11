@@ -23,7 +23,7 @@ import com.r.dosc.domain.ui.theme.Dark_1
 @Composable
 fun DocCreatingDialog() {
 
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.rhit))
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.anim_pdf_generating))
     val progress by animateLottieCompositionAsState(
         clipSpec = LottieClipSpec.Progress(0.2f, 1f),
         composition = composition,

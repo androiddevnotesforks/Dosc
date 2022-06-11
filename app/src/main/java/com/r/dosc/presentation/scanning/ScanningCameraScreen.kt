@@ -120,13 +120,11 @@ fun ScanningCameraScreen(
                         actions = {
                             IconButton(
                                 onClick = {
-                                    scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-
-//                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
-//                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-//                                    } else {
-//                                        navigator.navigateUp()
-//                                    }
+                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
+                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
+                                    } else {
+                                        navigator.navigateUp()
+                                    }
 
                                 }
 
@@ -134,6 +132,7 @@ fun ScanningCameraScreen(
                                 Icon(
                                     imageVector = Icons.Rounded.Save,
                                     contentDescription = "save",
+                                    tint = Color.White
                                 )
                             }
                         }

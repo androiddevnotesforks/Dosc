@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
             isDarkThemeState.value = prefStorage.isDarkTheme.first()
             isStartWithFileNameState.value = prefStorage.isStartWithFileName.first()
 
-            delay(500L)
+            delay(2500L)
             _duration.value = false
 
         }

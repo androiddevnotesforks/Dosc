@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.imageLoader
 import com.r.dosc.R
+import com.r.dosc.domain.components.DeleteDialogBox
 import com.r.dosc.domain.ui.theme.GrayShade_light
 import com.r.dosc.domain.util.getPdfUri
 import com.r.dosc.domain.util.pageIndex
@@ -59,6 +60,10 @@ fun PdfDocViewer(
         derivedStateOf {
             docListState.firstVisibleItemScrollOffset <= 0
         }
+    }
+
+    var onDeleteClicked by remember {
+        mutableStateOf(false)
     }
 
     val rendererScope = rememberCoroutineScope()
@@ -131,9 +136,7 @@ fun PdfDocViewer(
 
                     IconButton(
                         onClick = {
-                            viewerViewModel.deleteDocument(file)
-                            homeViewModel.updateDocList()
-                            navigator.navigateUp()
+                            onDeleteClicked = true
                         }
 
                     ) {
@@ -278,5 +281,18 @@ fun PdfDocViewer(
             }
         }
     }
+
+    if (onDeleteClicked) {
+        DeleteDialogBox(
+            onDelete = {
+                viewerViewModel.deleteDocument(file)
+                homeViewModel.updateDocList()
+                navigator.navigateUp()
+            },
+            onDismissRequest = {}
+        )
+
+    }
+
 }
 
