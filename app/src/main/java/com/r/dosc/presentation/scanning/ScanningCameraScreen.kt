@@ -13,14 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.r.dosc.domain.ui.theme.DarkColorPalette
@@ -85,7 +83,6 @@ fun ScanningCameraScreen(
     if (scanningViewModel.showDialog.collectAsState().value) {
         DocCreatingDialog()
     }
-
 
     DoscTheme(darkTheme = true) {
 
@@ -172,13 +169,7 @@ fun ScanningCameraScreen(
                             contentAlignment = Alignment.Center
                         ) {
 
-                            AsyncImage(
-                                modifier = Modifier.fillMaxSize(),
-                                model = (screenUiEvents as ScanningScreenEvents.OpenDocPreview).uri,
-                                contentDescription = "",
-                                alignment = Alignment.Center,
-                                contentScale = ContentScale.FillBounds
-                            )
+                            CropImageView(model = (screenUiEvents as ScanningScreenEvents.OpenDocPreview).uri)
 
                         }
                     }
@@ -288,11 +279,23 @@ fun ScanningCameraScreen(
                                         coroutineScope
                                     )
 
+                                },
+                                theme = {
+                                    showSnackBar(
+                                        "Theme Image",
+                                        scaffoldState,
+                                        coroutineScope
+                                    )
+                                },
+                                rotate = {
+                                    showSnackBar(
+                                        "Rotate Image",
+                                        scaffoldState,
+                                        coroutineScope
+                                    )
                                 }
                             )
-
                         }
-
                     }
                 }
             }

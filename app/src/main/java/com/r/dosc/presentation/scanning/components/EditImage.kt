@@ -19,9 +19,10 @@ import com.r.dosc.domain.ui.theme.Helper_Text_Color
 
 @Composable
 fun EditImage(
-    crop: () -> Unit
+    crop: () -> Unit,
+    theme: () -> Unit,
+    rotate: () -> Unit
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,11 +36,15 @@ fun EditImage(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        EditItem(R.drawable.ic_black_white, "Theme")
+        EditItem(R.drawable.ic_black_white, "Theme"){
+            theme()
+        }
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        EditItem(R.drawable.ic_rotate, "Rotate")
+        EditItem(R.drawable.ic_rotate, "Rotate") {
+            rotate()
+        }
 
 
     }
@@ -50,7 +55,7 @@ fun EditImage(
 fun EditItem(
     icon: Int,
     text: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,6 +63,7 @@ fun EditItem(
             onClick()
         }
     ) {
+
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -72,7 +78,7 @@ fun EditItem(
                 modifier = Modifier
                     .size(25.dp),
                 painter = painterResource(icon),
-                contentDescription = "icon_crop",
+                contentDescription = text,
                 tint = Color.Unspecified
             )
         }

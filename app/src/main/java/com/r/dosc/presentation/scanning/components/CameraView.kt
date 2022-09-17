@@ -1,10 +1,7 @@
 package com.r.dosc.presentation.scanning.components
 
 import android.net.Uri
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.view.PreviewView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,27 +24,44 @@ fun CameraView(
     onError: (ImageCaptureException) -> Unit,
     scanningViewModel: ScanningViewModel
 ) {
-    val lensFacing = CameraSelector.LENS_FACING_BACK
+
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val preview = Preview.Builder().build()
     val previewView = remember { PreviewView(context) }
-    val imageCapture: ImageCapture = remember { ImageCapture.Builder().build() }
-    val cameraSelector = CameraSelector.Builder()
-        .requireLensFacing(lensFacing)
-        .build()
 
-    LaunchedEffect(lensFacing) {
+    val imageCapture: ImageCapture = remember {
+        ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+            .build()
+    }
+
+
+    LaunchedEffect(Unit) {
         val cameraProvider = scanningViewModel.getCameraProvider()
-        cameraProvider.unbindAll()
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            cameraSelector,
-            preview,
-            imageCapture
-        )
-        preview.setSurfaceProvider(previewView.surfaceProvider)
+
+        val preview = Preview.Builder().build().also {
+            it.setSurfaceProvider(previewView.surfaceProvider)
+        }
+        val imageAnalyzer = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+
+        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+        try {
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                lifecycleOwner,
+                cameraSelector,
+                preview,
+                imageCapture,
+                imageAnalyzer
+            )
+
+        } catch (e: Exception) {
+            //handle error todo
+        }
 
         scanningViewModel.captureImage.collectLatest { click ->
             when (click) {
@@ -60,7 +74,6 @@ fun CameraView(
                             onImageCaptured(uri)
                         },
                         onError = onError
-
                     )
                     scanningViewModel.clickImage(false)
 
@@ -112,5 +125,4 @@ private fun takePhoto(
         })
 
 }
-
 

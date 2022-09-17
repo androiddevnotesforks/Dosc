@@ -110,13 +110,11 @@ class ScanningViewModel
 
                     iDocument.pageSize = Rectangle(image.width, image.height)
 
-
                     iDocument.newPage()
 
                     iDocument.add(image)
 
                 }
-
 
             }
             creatingPdf.await()
@@ -139,15 +137,12 @@ class ScanningViewModel
     fun clickImage(click: Boolean) {
         viewModelScope.launch {
             captureImage.emit(click)
-
             if (click) {
-
                 if (isClickedFirstTime.value == CaptureButtonAnim.INITIAL) {
                     iterationsBtn.value = 1
                     iterationsBtn.value++
                 } else {
                     iterationsBtn.value++
-
                 }
 
             }
