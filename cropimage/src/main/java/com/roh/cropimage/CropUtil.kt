@@ -42,6 +42,11 @@ class CropUtil constructor(bitmap: Bitmap) {
     var guideLineFour: GuideLine by mutableStateOf(GuideLine())
         private set
 
+    var widthDiffInEdges: Float by mutableStateOf(0.0f)
+        private set
+
+    var heightDiffInEdges: Float by mutableStateOf(0.0f)
+        private set
 
     init {
         mBitmap = bitmap
@@ -55,11 +60,13 @@ class CropUtil constructor(bitmap: Bitmap) {
     fun updateBitmapSizeChange(width: Int, height: Int) {
         this.canvasWidth = width
         this.canvasHeight = height
+        this.widthDiffInEdges = width / 7f
+        this.heightDiffInEdges = height / 7f
         resetCropView()
 
     }
 
-    fun cropImage(mWidth: Int, mHeight:Int): Bitmap {
+    fun cropImage(mWidth: Int, mHeight: Int): Bitmap {
 
         val rect = getRectFromPoints()
 
@@ -94,7 +101,6 @@ class CropUtil constructor(bitmap: Bitmap) {
     }
 
 
-
     fun resetCropView() {
         updateCircleOne(Offset(0f, 0f))
         updateCircleTwo(Offset(canvasWidth.toFloat(), 0f))
@@ -102,6 +108,7 @@ class CropUtil constructor(bitmap: Bitmap) {
         updateCircleFour(Offset(canvasWidth.toFloat(), canvasHeight.toFloat()))
 
     }
+
     fun updateCropEdges(
         circleOne: Offset,
         circleTwo: Offset,
@@ -122,45 +129,65 @@ class CropUtil constructor(bitmap: Bitmap) {
 
     fun updateCircleOne(offset: Offset) {
 
-        this.circleOne = offset
-        this.circleTwo = Offset(circleTwo.x, offset.y)
-        this.circleThree = Offset(offset.x, circleThree.y)
+        val diffX = abs(circleTwo.x - offset.x)
+        val diffY = abs(circleThree.y - offset.y)
 
-        updateGuideLineOne()
-        updateGuideLineTwo()
-        updateGuideLineThree()
-        updateGuideLineFour()
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+
+            this.circleOne = offset
+            this.circleTwo = Offset(circleTwo.x, offset.y)
+            this.circleThree = Offset(offset.x, circleThree.y)
+
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
     }
 
     fun updateCircleTwo(offset: Offset) {
-        this.circleTwo = offset
-        this.circleOne = Offset(circleOne.x, offset.y)
-        this.circleFour = Offset(offset.x, circleFour.y)
-        updateGuideLineOne()
-        updateGuideLineTwo()
-        updateGuideLineThree()
-        updateGuideLineFour()
+        val diffX = abs(offset.x - circleOne.x)
+        val diffY = abs(circleFour.y - offset.y)
+
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+            this.circleTwo = offset
+            this.circleOne = Offset(circleOne.x, offset.y)
+            this.circleFour = Offset(offset.x, circleFour.y)
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
     }
 
     fun updateCircleThree(offset: Offset) {
-        this.circleThree = offset
-        this.circleOne = Offset(offset.x, circleOne.y)
-        this.circleFour = Offset(circleFour.x, offset.y)
-        updateGuideLineOne()
-        updateGuideLineTwo()
-        updateGuideLineThree()
-        updateGuideLineFour()
+        val diffX = abs(offset.x - circleFour.x)
+        val diffY = abs(circleOne.y - offset.y)
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+            this.circleThree = offset
+            this.circleOne = Offset(offset.x, circleOne.y)
+            this.circleFour = Offset(circleFour.x, offset.y)
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
 
     }
 
     fun updateCircleFour(offset: Offset) {
-        this.circleFour = offset
-        this.circleTwo = Offset(offset.x, circleTwo.y)
-        this.circleThree = Offset(circleThree.x, offset.y)
-        updateGuideLineOne()
-        updateGuideLineTwo()
-        updateGuideLineThree()
-        updateGuideLineFour()
+        val diffX = abs(offset.x - circleThree.x)
+        val diffY = abs(circleTwo.y - offset.y)
+
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+            this.circleFour = offset
+            this.circleTwo = Offset(offset.x, circleTwo.y)
+            this.circleThree = Offset(circleThree.x, offset.y)
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
     }
 
     private fun updateGuideLineOne() {
