@@ -19,14 +19,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.get
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.r.dosc.domain.ui.theme.Ocean_Red
+import com.r.dosc.presentation.appDestination
 import com.r.dosc.presentation.destinations.Destination
 import com.r.dosc.presentation.destinations.HomeScreenDestination
-import com.r.dosc.presentation.navDestination
-import com.ramcosta.composedestinations.navigation.navigateTo
+import com.ramcosta.composedestinations.navigation.navigate
 
 @ExperimentalAnimationApi
 @ExperimentalPermissionsApi
@@ -36,7 +37,7 @@ fun BottomBar(
 ) {
     val currentDestination: Destination? =
         navController.currentBackStackEntryAsState()
-            .value?.navDestination
+            .value?.appDestination()
 
     CompositionLocalProvider(
         LocalRippleTheme provides ClearRippleTheme
@@ -50,8 +51,7 @@ fun BottomBar(
                 BottomNavigationItem(
                     selected = currentDestination == destination.direction,
                     onClick = {
-                        navController.navigateTo(destination.direction) {
-
+                        navController.navigate(destination.direction, fun NavOptionsBuilder.() {
                             popUpTo(navController.graph[HomeScreenDestination.route].id) {
                                 saveState = true
                             }
@@ -59,7 +59,7 @@ fun BottomBar(
                             launchSingleTop = true
 
                             restoreState = true
-                        }
+                        })
                     },
                     icon = {
                         NavigationItemIcon(

@@ -4,21 +4,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.r.dosc.data.preference.PreferenceStorage
+import com.r.dosc.presentation.destinations.HomeScreenDestination
 import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val HOME_SCREEN = "Dosc"
 const val SETTINGS_SCREEN = "Settings"
 
+@OptIn(ExperimentalPermissionsApi::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val prefStorage: PreferenceStorage,
@@ -32,6 +32,9 @@ class MainViewModel @Inject constructor(
 
     private val _uiEvent = Channel<MainScreenEvents>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private val _isShowTopAppbarBottomBar = MutableStateFlow(false)
+    val isShowTopAppbarBottomBar: StateFlow<Boolean> = _isShowTopAppbarBottomBar
 
     val isDarkThemeState = mutableStateOf(false)
     val isStartWithFileNameState = mutableStateOf(false)
@@ -55,10 +58,29 @@ class MainViewModel @Inject constructor(
     fun onEvent(events: MainScreenEvents) {
         when (events) {
             is MainScreenEvents.TopAppBarTitle -> {
-                if (events.route == SettingsScreenDestination.route) {
-                    setTopAppBarTitle(SETTINGS_SCREEN)
-                } else {
-                    setTopAppBarTitle(HOME_SCREEN)
+                when (events.route) {
+                    SettingsScreenDestination.route -> {
+                        setTopAppBarTitle(SETTINGS_SCREEN)
+                        viewModelScope.launch {
+                            _isShowTopAppbarBottomBar.emit(true)
+
+                        }
+
+                    }
+                    HomeScreenDestination.route -> {
+                        setTopAppBarTitle(HOME_SCREEN)
+                        viewModelScope.launch {
+                            _isShowTopAppbarBottomBar.emit(true)
+
+                        }
+
+                    }
+                    else -> {
+                        viewModelScope.launch {
+                            _isShowTopAppbarBottomBar.emit(false)
+
+                        }
+                    }
                 }
             }
 
@@ -123,7 +145,6 @@ class MainViewModel @Inject constructor(
             _updateDocList.emit(isUpdate)
         }
     }
-
 
 
 }

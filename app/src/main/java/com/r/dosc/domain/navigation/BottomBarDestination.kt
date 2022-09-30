@@ -3,7 +3,6 @@ package com.r.dosc.domain.navigation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.r.dosc.presentation.destinations.HomeScreenDestination
 import com.r.dosc.presentation.destinations.SettingsScreenDestination
-import com.r.dosc.presentation.settings.SettingsScreen
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 
 enum class BottomBarDestination(

@@ -6,10 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -40,7 +43,7 @@ import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.r.dosc.presentation.main.components.SetupPermissions
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.dependency
-import com.ramcosta.composedestinations.navigation.navigateTo
+import com.ramcosta.composedestinations.navigation.navigate
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalPermissionsApi
@@ -63,33 +66,33 @@ class MainActivity : ComponentActivity() {
                 val lifecycleOwner = LocalLifecycleOwner.current
                 SetUpStatusBar(systemUiController, lifecycleOwner, mainViewModel, false)
 
+                //viewModels
+                val permissionViewModel: PermissionViewModel by viewModels()
+                val homeViewModel: HomeViewModel by viewModels()
+
+                //permission
+                SetupPermissions(permissionViewModel)
+                val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+
+
+                val navController = rememberAnimatedNavController()
+                val scaffoldState = rememberScaffoldState()
+                val coroutineScope = rememberCoroutineScope()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+
+                val topBarColor = animateColorAsState(
+                    if (shouldShowBottomNavBarTopBarFloatBtn(navBackStackEntry)) {
+                        MaterialTheme.colors.primarySurface
+                    } else {
+                        Color.Black
+                    }
+                )
+
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    //viewModels
-                    val permissionViewModel: PermissionViewModel by viewModels()
-                    val homeViewModel: HomeViewModel by viewModels()
-
-                    //permission
-                    SetupPermissions(permissionViewModel)
-                    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
-
-
-                    val navController = rememberAnimatedNavController()
-                    val scaffoldState = rememberScaffoldState()
-                    val coroutineScope = rememberCoroutineScope()
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-
-                    val topBarColor = animateColorAsState(
-                        if (shouldShowBottomNavBarTopBarFloatBtn(navBackStackEntry)) {
-                            MaterialTheme.colors.primarySurface
-                        } else {
-                            Color.Black
-                        }
-                    )
-
 
                     navController.addOnDestinationChangedListener(listener = { _, dest, _ ->
                         mainViewModel.onEvent(MainScreenEvents.TopAppBarTitle(dest.route))
@@ -98,9 +101,9 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         topBar = {
                             AnimatedVisibility(
-                                visible = shouldShowBottomNavBarTopBarFloatBtn(navBackStackEntry),
-                                enter = expandVertically(),
-                                exit = shrinkVertically()
+                                visible = mainViewModel.isShowTopAppbarBottomBar.collectAsState().value,
+                                enter = slideInVertically(),
+                                exit = slideOutVertically() + fadeOut(animationSpec = tween(200))
                             ) {
                                 TopAppBar(
                                     title = {
@@ -154,6 +157,7 @@ class MainActivity : ComponentActivity() {
                         isFloatingActionButtonDocked = true,
                         scaffoldState = scaffoldState
                     ) {
+
                         DestinationsNavHost(
                             navGraph = NavGraphs.root,
                             navController = navController,
@@ -177,12 +181,14 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (mainViewModel.scanningStart.value == true) {
+                        navController.navigate(
+                            ScanningCameraScreenDestination(""),
 
-                        navController.navigateTo(ScanningCameraScreenDestination("")) {
-                            launchSingleTop = true
-                            popUpTo(HomeScreenDestination.route)
-
-                        }
+                            fun NavOptionsBuilder.() {
+                                launchSingleTop = true
+                                popUpTo(HomeScreenDestination.route)
+                            }
+                        )
                         mainViewModel.scanningStart(null)
 
                     }
@@ -192,10 +198,12 @@ class MainActivity : ComponentActivity() {
                         DocumentNameDialogBox(
                             viewModel = mainViewModel,
                             onSubmit = { fileName ->
-                                navController.navigateTo(ScanningCameraScreenDestination(fileName.trim())) {
-                                    launchSingleTop = true
-                                    popUpTo(HomeScreenDestination.route)
-                                }
+                                navController.navigate(
+                                    ScanningCameraScreenDestination(fileName.trim()),
+                                    fun NavOptionsBuilder.() {
+                                        launchSingleTop = true
+                                        popUpTo(HomeScreenDestination.route)
+                                    })
                             }
                         )
                     }

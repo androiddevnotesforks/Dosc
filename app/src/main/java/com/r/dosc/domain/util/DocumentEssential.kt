@@ -1,6 +1,7 @@
 package com.r.dosc.domain.util
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.core.net.toFile
 import com.itextpdf.text.Document
@@ -27,7 +28,9 @@ constructor(
             FileOutputStream(fileName)
         )
 
-    suspend fun compressImage(count: Int, imFile: Uri): String {
+    suspend fun compressImage(count: Int, imgFileUri: Uri): String {
+        println("rohit image path 1 => $imgFileUri")
+
         val photoOutputTempFile = File(
             tempDirectory,
             SimpleDateFormat(
@@ -36,13 +39,18 @@ constructor(
             ).format(System.currentTimeMillis()) + ".jpg"
         )
 
-        val compressedImageFile: File = Compressor.compress(context, imFile.toFile()) {
+        val compressedImageFile: File = Compressor.compress(context, imgFileUri.toFile()) {
                 default()
                 destination(photoOutputTempFile)
             }
 
+        println("rohit image path 2 => ${compressedImageFile.absolutePath}")
+
+
         return compressedImageFile.absolutePath
 
     }
+
+
 
 }

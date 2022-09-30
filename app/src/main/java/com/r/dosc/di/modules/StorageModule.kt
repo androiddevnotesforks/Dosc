@@ -29,7 +29,7 @@ object StorageModule {
 
     @Singleton
     @Provides
-    fun provideLoginPreference(@ApplicationContext appContext: Context): DataStore<Preferences> {
+    fun providePreference(@ApplicationContext appContext: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }

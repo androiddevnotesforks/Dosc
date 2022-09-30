@@ -33,7 +33,7 @@ fun OnEmptyState(
 
         LottieAnimation(
             composition,
-            progress,
+            progress= { progress },
             modifier = Modifier.size(250.dp, 250.dp),
         )
 

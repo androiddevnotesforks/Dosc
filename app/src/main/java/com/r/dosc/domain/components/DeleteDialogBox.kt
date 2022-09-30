@@ -38,7 +38,10 @@ fun DeleteDialogBox(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "This will delete your document permanently \nAre you sure?",fontSize = 16.sp,)
+                    Text(
+                        text = "This will delete your document permanently \nAre you sure?",
+                        fontSize = 16.sp,
+                    )
                 }
             },
             buttons = {

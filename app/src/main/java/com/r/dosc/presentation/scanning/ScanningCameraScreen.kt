@@ -1,6 +1,7 @@
 package com.r.dosc.presentation.scanning
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,14 +23,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.r.dosc.R
 import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
-import com.r.dosc.domain.util.showSnackBar
+import com.r.dosc.domain.ui.theme.Ocean_Red_2
 import com.r.dosc.presentation.main.MainViewModel
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 
@@ -49,31 +53,53 @@ fun ScanningCameraScreen(
 
     val systemUiController = rememberSystemUiController()
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+
+    val indexSelectedImage = remember { mutableStateOf(0) }
+    var isSelected by remember {
+        mutableStateOf(false)
+
+    }
 
 
-    DisposableEffect(
-        key1 = lifecycleOwner,
-        effect = {
-            val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
-                    systemUiController.setSystemBarsColor(
-                        color = DarkColorPalette.primarySurface
-                    )
-                }
-            }
-            lifecycleOwner.lifecycle.addObserver(observer)
-
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
+    DisposableEffect(key1 = lifecycleOwner, effect = {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
+                systemUiController.setSystemBarsColor(
+                    color = DarkColorPalette.primarySurface
+                )
             }
         }
-    )
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    })
+
+    LaunchedEffect(true) {
+        launch {
+            scanningViewModel.uiEvent.collect { uiEvent ->
+                when (uiEvent) {
+
+                    is ScanningScreenEvents.OpenDocPreview -> {
+                        indexSelectedImage.value = uiEvent.indx
+                        isSelected = true
+
+
+                    }
+                    else -> {
+                        isSelected = false
+                    }
+                }
+            }
+        }
+
+    }
 
     val imgListState = rememberLazyListState()
 
-    val screenUiEvents by scanningViewModel.uiEvent.collectAsState(ScanningScreenEvents.CameraScreen)
 
     if (scanningViewModel.closeScanningScreen.collectAsState().value) {
         mainViewModel.updateDocList(true)
@@ -91,49 +117,43 @@ fun ScanningCameraScreen(
             topBar = {
                 AnimatedVisibility(
                     visible = true,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
+                    enter = fadeIn(animationSpec = tween(500)) + slideInVertically(),
+                    exit = fadeOut(animationSpec = tween(100)) + slideOutVertically()
                 ) {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = title,
-                                fontSize = 30.sp,
-                                color = Color.White,
+                    TopAppBar(title = {
+                        Text(
+                            text = title,
+                            fontSize = 30.sp,
+                            color = Color.White,
 
-                                )
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                navigator.navigateUp()
+                            )
+                    }, navigationIcon = {
+                        IconButton(onClick = {
+                            navigator.navigateUp()
 
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "close"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(
-                                onClick = {
-                                    if (scanningViewModel.listOfImages.isNotEmpty()) {
-                                        scanningViewModel.onEvent(ScanningScreenEvents.SavePdf)
-                                    } else {
-                                        navigator.navigateUp()
-                                    }
-
-                                }
-
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Save,
-                                    contentDescription = "save",
-                                    tint = Color.White
-                                )
-                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Close, contentDescription = "close"
+                            )
                         }
-                    )
+                    }, actions = {
+                        IconButton(onClick = {
+                            if (scanningViewModel.listOfImages.isNotEmpty()) {
+                                scanningViewModel.onEvent(ScanningScreenEvents.SavePdf(context))
+                            } else {
+                                navigator.navigateUp()
+                            }
+
+                        }
+
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Save,
+                                contentDescription = "save",
+                                tint = Color.White
+                            )
+                        }
+                    })
                 }
             },
             scaffoldState = scaffoldState,
@@ -149,28 +169,40 @@ fun ScanningCameraScreen(
                         .weight(70f)
                 ) {
                     if (scanningViewModel.isScanningMode.collectAsState().value) {
-                        CameraView(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            onImageCaptured = { imgUri ->
-                                scanningViewModel.addImage(imgUri)
-                            },
-                            onError = {
+                        CameraView(modifier = Modifier.fillMaxSize(), onImageCaptured = { imgUri ->
+                            scanningViewModel.addImage(imgUri)
+                        }, onError = {
 
-                            },
-                            scanningViewModel = scanningViewModel
+                        }, scanningViewModel = scanningViewModel
                         )
                     }
+
                     if (scanningViewModel.isDocumentPreviewMode.collectAsState().value) {
+
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(12.dp),
                             contentAlignment = Alignment.Center
                         ) {
+                            CropImageView(
+                                bitmap = scanningViewModel.bitmapImage.collectAsState().value,
+                                imageEditDetails = scanningViewModel.imageEditDetails.collectAsState().value,
+                                onCropEdgesChange = {  offset1, offset2, offset3, offset4 ->
 
-                            CropImageView(model = (screenUiEvents as ScanningScreenEvents.OpenDocPreview).uri)
-
+                                    scanningViewModel.updateImageCropBound(
+                                        indexSelectedImage.value,
+                                        offset1,
+                                        offset2,
+                                        offset3,
+                                        offset4
+                                    )
+                                },
+                                indexSelectedImage = indexSelectedImage.value,
+                                cropRectSize = {
+                                    scanningViewModel.updateCropRectSize(it.width, it.height)
+                                }
+                            )
                         }
                     }
                 }
@@ -202,14 +234,19 @@ fun ScanningCameraScreen(
                             scanningViewModel.listOfImages.forEachIndexed { index, i ->
                                 item {
                                     val count = abs(index + 1)
-                                    ImagePreviewItem(
-                                        uri = i,
-                                        count,
-                                        scanningViewModel,
+                                    ImagePreviewItem(uri = i,
+                                        count = count,
+                                        borderColor = if (indexSelectedImage.value == count - 1 && isSelected) {
+                                            Ocean_Red_2
+                                        } else {
+                                            Color.LightGray
+                                        },
                                         onImageClick = { sendUri, _ ->
                                             scanningViewModel.onEvent(
                                                 ScanningScreenEvents.OpenDocPreview(
-                                                    sendUri, index
+                                                    sendUri,
+                                                    index,
+                                                    context
                                                 )
                                             )
 
@@ -220,8 +257,7 @@ fun ScanningCameraScreen(
                                                     indx
                                                 )
                                             )
-                                        }
-                                    )
+                                        })
 
                                 }
                             }
@@ -230,9 +266,7 @@ fun ScanningCameraScreen(
 
                         //plus icon
                         Box(
-                            modifier = Modifier
-                                .weight(1.2f),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.weight(1.2f), contentAlignment = Alignment.Center
                         ) {
 
                             GotoCameraScreenButton(
@@ -250,8 +284,7 @@ fun ScanningCameraScreen(
                             .weight(5f),
                         contentAlignment = Alignment.Center
                     ) {
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = scanningViewModel.isScanningMode.collectAsState().value,
+                        androidx.compose.animation.AnimatedVisibility(visible = scanningViewModel.isScanningMode.collectAsState().value,
                             enter = slideInVertically { height -> height } + fadeIn(),
                             exit = slideOutVertically { height -> height } + fadeOut()
 
@@ -264,37 +297,36 @@ fun ScanningCameraScreen(
 
                         }
 
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = !scanningViewModel.isScanningMode.collectAsState().value,
+                        androidx.compose.animation.AnimatedVisibility(visible = !scanningViewModel.isScanningMode.collectAsState().value,
                             enter = slideInVertically { height -> height } + fadeIn(),
                             exit = slideOutVertically { height -> height } + fadeOut()
 
                         ) {
-
-                            EditImage(
-                                crop = {
-                                    showSnackBar(
-                                        "Crop Image",
-                                        scaffoldState,
-                                        coroutineScope
-                                    )
-
-                                },
-                                theme = {
-                                    showSnackBar(
-                                        "Theme Image",
-                                        scaffoldState,
-                                        coroutineScope
-                                    )
-                                },
-                                rotate = {
-                                    showSnackBar(
-                                        "Rotate Image",
-                                        scaffoldState,
-                                        coroutineScope
-                                    )
-                                }
-                            )
+                            EditItem(R.drawable.ic_crop, "Crop")
+//                            EditImage(
+//                                crop = {
+//                                    showSnackBar(
+//                                        "Crop Image",
+//                                        scaffoldState,
+//                                        coroutineScope
+//                                    )
+//
+//                                },
+//                                theme = {
+//                                    showSnackBar(
+//                                        "Theme Image",
+//                                        scaffoldState,
+//                                        coroutineScope
+//                                    )
+//                                },
+//                                rotate = {
+//                                    showSnackBar(
+//                                        "Rotate Image",
+//                                        scaffoldState,
+//                                        coroutineScope
+//                                    )
+//                                }
+//                            )
                         }
                     }
                 }
@@ -307,6 +339,7 @@ fun ScanningCameraScreen(
             }
         }
     }
+
 }
 
 

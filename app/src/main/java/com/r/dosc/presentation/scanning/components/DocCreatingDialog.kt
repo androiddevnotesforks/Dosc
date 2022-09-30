@@ -55,7 +55,7 @@ fun DocCreatingDialog() {
                 LottieAnimation(
                     modifier = Modifier.size(130.dp),
                     composition = composition,
-                    progress = progress
+                    progress = { progress }
                 )
 
 

@@ -34,8 +34,8 @@ fun CaptureDocFloatingButton(
         LocalRippleTheme provides ClearRippleTheme
     ) {
         LottieAnimation(
-            composition,
-            progress,
+            composition = composition,
+            progress= { progress },
             modifier = Modifier
                 .size(250.dp, 250.dp)
                 .clickable {

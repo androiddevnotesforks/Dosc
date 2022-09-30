@@ -21,11 +21,13 @@ import com.r.dosc.presentation.home.components.OnEmptyState
 import com.r.dosc.presentation.home.components.ShowPdfList
 import com.r.dosc.presentation.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 
 @ExperimentalPermissionsApi
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,

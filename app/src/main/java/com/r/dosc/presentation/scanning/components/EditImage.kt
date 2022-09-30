@@ -30,21 +30,19 @@ fun EditImage(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        EditItem(R.drawable.ic_crop, "Crop", onClick = {
-            crop()
-        })
+        EditItem(R.drawable.ic_crop, "Crop", )
 
-        Spacer(modifier = Modifier.width(16.dp))
-
-        EditItem(R.drawable.ic_black_white, "Theme"){
-            theme()
-        }
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        EditItem(R.drawable.ic_rotate, "Rotate") {
-            rotate()
-        }
+//        Spacer(modifier = Modifier.width(16.dp))
+//
+//        EditItem(R.drawable.ic_black_white, "Theme"){
+//            theme()
+//        }
+//
+//        Spacer(modifier = Modifier.width(16.dp))
+//
+//        EditItem(R.drawable.ic_rotate, "Rotate") {
+//            rotate()
+//        }
 
 
     }
@@ -55,13 +53,13 @@ fun EditImage(
 fun EditItem(
     icon: Int,
     text: String,
-    onClick: () -> Unit
+    //onClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable {
-            onClick()
-        }
+//        modifier = Modifier.clickable {
+//            onClick()
+//        }
     ) {
 
         Box(

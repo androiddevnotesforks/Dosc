@@ -11,7 +11,6 @@ val Desert_Storm = Color(0xFF3E619B)
 val Helper_Text_Color = Color(0xFFAFA7AF)
 
 val White_Shade = Color(0xFFFAFAFA)
-val Green_Shade = Color(0xFF1E5128)
 
 //for dark theme
 val Dark_1 = Color(0xFF191A19)

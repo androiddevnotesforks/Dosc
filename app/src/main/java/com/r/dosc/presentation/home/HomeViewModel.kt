@@ -1,21 +1,11 @@
 package com.r.dosc.presentation.home
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.itextpdf.text.pdf.PdfReader
 import com.r.dosc.domain.models.PdfDocumentDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.reflect.InvocationTargetException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -96,18 +86,18 @@ class HomeViewModel
 
     private fun getPdfDocument(path: String?): File = File(path.toString())
 
-    private fun getNoOfDocPages(file: File): String {
-        return try {
-            val pdfReader = PdfReader(file.absolutePath)
-            pdfReader.numberOfPages.toString()
-
-        } catch (e: InvocationTargetException) {
-            ""
-        } catch (e: Exception) {
-            ""
-        }
-
-    }
+//    private fun getNoOfDocPages(file: File): String {
+//        return try {
+//            val pdfReader = PdfReader(file.absolutePath)
+//            pdfReader.numberOfPages.toString()
+//
+//        } catch (e: InvocationTargetException) {
+//            ""
+//        } catch (e: Exception) {
+//            ""
+//        }
+//
+//    }
 
 
 }

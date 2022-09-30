@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.domain.ui.theme.Green_Shade
 import com.r.dosc.domain.ui.theme.Ocean_Red_2
 import com.r.dosc.domain.ui.theme.White_Shade
 import com.r.dosc.presentation.scanning.ScanningScreenEvents
@@ -31,34 +30,12 @@ import com.r.dosc.presentation.scanning.ScanningViewModel
 fun ImagePreviewItem(
     uri: Uri,
     count: Int,
-    scanningViewModel: ScanningViewModel,
+    borderColor: Color,
     removeImage: (Int) -> Unit,
     onImageClick: (Uri, Int) -> Unit,
 ) {
 
-    var isSelected by remember {
-        mutableStateOf(Color.LightGray)
 
-    }
-
-    LaunchedEffect(Unit) {
-        scanningViewModel.uiEvent.collect { uiEvent ->
-            isSelected = when (uiEvent) {
-                is ScanningScreenEvents.OpenDocPreview -> {
-                    if (uiEvent.indx == count - 1) {
-                        Ocean_Red_2
-                    } else {
-                        Color.LightGray
-                    }
-                }
-                else -> {
-                    Color.LightGray
-                }
-            }
-
-        }
-
-    }
 
     Box(
         modifier = Modifier
@@ -77,7 +54,7 @@ fun ImagePreviewItem(
                 .fillMaxSize()
                 .border(
                     width = 1.dp,
-                    color = isSelected,
+                    color = borderColor,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .clip(RoundedCornerShape(10.dp)),
