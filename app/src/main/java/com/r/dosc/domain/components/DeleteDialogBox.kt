@@ -75,7 +75,6 @@ fun DeleteDialogBox(
                         onClick = {
                             showDialog = false
                             onDelete()
-                            onDismissRequest()
 
                         },
                     ) {

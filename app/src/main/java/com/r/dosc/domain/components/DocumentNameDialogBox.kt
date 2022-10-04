@@ -1,4 +1,4 @@
-package com.r.dosc.presentation.main.components
+package com.r.dosc.domain.components
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -41,15 +41,19 @@ fun DocumentNameDialogBox(
 
                 Text(text = "")
                 OutlinedTextField(
-                    modifier = Modifier.height(50.dp),
                     value = text,
-                    onValueChange = { text = it },
+                    onValueChange = {
+                        if (text.length < 25) {
+                            text = it
+
+                        }
+                    },
                     singleLine = true,
-                    maxLines = 50,
+                    maxLines = 1,
                     textStyle = TextStyle(
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
-                        color = if (isSystemInDarkTheme() || viewModel.isDarkThemeState.value) Color.White else  Color.Black
+                        color = if (isSystemInDarkTheme() || viewModel.isDarkThemeState.value) Color.White else Color.Black
                     ),
                     placeholder = {
                         Text(text = "Type here..", color = Color.LightGray)

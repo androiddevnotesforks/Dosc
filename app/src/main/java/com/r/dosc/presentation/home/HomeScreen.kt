@@ -62,7 +62,6 @@ fun HomeScreen(
         hasPermission = {
             if (homeViewModel.listOfPdfDocuments.isNotEmpty()) {
                 ShowPdfList(
-                    homeViewModel = homeViewModel,
                     listOfPdfs = homeViewModel.listOfPdfDocuments,
                     openDocument = { doc, _ ->
                         navigator.navigate(
@@ -89,6 +88,7 @@ fun HomeScreen(
                         DeleteDialogBox(
                             onDelete = {
                                 homeViewModel.deleteDocument(indx)
+
                             },
                             onDismissRequest = {
                                 homeViewModel.onEvent(HomeScreenEvents.DismissDropDown(true))

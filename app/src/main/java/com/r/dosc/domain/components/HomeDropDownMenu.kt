@@ -5,24 +5,23 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.r.dosc.domain.util.HomeListItemDropDownMenu
+import com.r.dosc.domain.models.HomeItemDropDownList
 
 val itemList = listOf(
-    HomeListItemDropDownMenu.Share(),
-    HomeListItemDropDownMenu.Delete(),
+    HomeItemDropDownList.Share(),
+    HomeItemDropDownList.Delete(),
 )
 
 @Composable
 fun DropDownMenu(
-    expanded: Boolean,
     onDeleteCheck:Boolean,
     modifier: Modifier,
     onDismissRequest: () -> Unit,
     onShare: () -> Unit,
-    onDelete: @Composable (HomeListItemDropDownMenu) -> Unit,
+    onDelete: @Composable (HomeItemDropDownList) -> Unit,
 ) {
     var isExpanded by remember {
-        mutableStateOf(expanded)
+        mutableStateOf(true)
     }
 
     var onDeleteClicked by remember {
@@ -42,16 +41,15 @@ fun DropDownMenu(
             DropdownMenuItem(
                 onClick = {
                     when (item) {
-                        is HomeListItemDropDownMenu.Share -> {
+                        is HomeItemDropDownList.Share -> {
                             onShare()
                             isExpanded = false
 
                             onDismissRequest()
 
                         }
-                        is HomeListItemDropDownMenu.Delete -> {
+                        is HomeItemDropDownList.Delete -> {
                             onDeleteClicked = true
-
                         }
                     }
 
@@ -66,7 +64,8 @@ fun DropDownMenu(
     }
 
     if (onDeleteClicked) {
-        onDelete(HomeListItemDropDownMenu.Delete())
+        onDelete(HomeItemDropDownList.Delete())
+        isExpanded = false
 
     }
 

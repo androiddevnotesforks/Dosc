@@ -1,18 +1,24 @@
 package com.r.dosc.presentation.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.r.dosc.domain.components.SortDropDownMenu
 import com.r.dosc.domain.ui.theme.Helper_Text_Color
 
 @Composable
 fun HelperTabLayout() {
+    var click by remember {
+        mutableStateOf(false)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -27,7 +33,11 @@ fun HelperTabLayout() {
         }
 
         Row(
-            modifier = Modifier.weight(5f),
+            modifier = Modifier
+                .weight(2f)
+                .clickable {
+                    click = true
+                },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
@@ -40,6 +50,28 @@ fun HelperTabLayout() {
 
             Text(text = "Sort")
 
+            if (click) {
+                SortDropDownMenu(
+                    modifier = Modifier,
+                    expanded = true,
+                    onDismissRequest = {
+                        click = false
+
+                    },
+                    onTitleSelect = {
+                        click = false
+
+                    },
+                    onDateSelect = {
+                        click = false
+
+                    }
+                )
+            }
+
         }
     }
+
+
+
 }

@@ -19,14 +19,11 @@ import com.r.dosc.R
 import com.r.dosc.domain.components.DropDownMenu
 import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.GrayShade_dark
-import com.r.dosc.presentation.home.HomeScreenEvents
-import com.r.dosc.presentation.home.HomeViewModel
 import java.io.File
 
 
 @Composable
 fun PdfItem(
-    homeViewModel: HomeViewModel,
     pdfDocumentDetails: PdfDocumentDetails,
     onDelete: @Composable () -> Unit,
     onShare: (File) -> Unit,
@@ -36,6 +33,7 @@ fun PdfItem(
     var showDropDown by remember {
         mutableStateOf(false)
     }
+
 
     Row(
         modifier = Modifier
@@ -87,7 +85,7 @@ fun PdfItem(
         ) {
             IconButton(
                 onClick = {
-                    showDropDown = true
+                    showDropDown = !showDropDown
                 }
             ) {
                 Icon(
@@ -98,7 +96,6 @@ fun PdfItem(
                 )
                 if (showDropDown) {
                     DropDownMenu(
-                        expanded = showDropDown,
                         onDeleteCheck = false,
                         modifier = Modifier,
                         onShare = {
@@ -107,7 +104,6 @@ fun PdfItem(
                         },
                         onDelete = {
                             onDelete()
-
                         },
                         onDismissRequest = {
                             showDropDown = false
@@ -117,12 +113,5 @@ fun PdfItem(
             }
         }
     }
-
-    if (homeViewModel.dismissDropDown.value) {
-        showDropDown = false
-        homeViewModel.onEvent(HomeScreenEvents.DismissDropDown(false))
-
-    }
-
 }
 

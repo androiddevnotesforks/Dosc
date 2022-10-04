@@ -38,7 +38,7 @@ import com.r.dosc.presentation.destinations.PdfDocViewerDestination
 import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
 import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import com.r.dosc.presentation.home.HomeViewModel
-import com.r.dosc.presentation.main.components.DocumentNameDialogBox
+import com.r.dosc.domain.components.DocumentNameDialogBox
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.r.dosc.presentation.main.components.SetupPermissions
 import com.ramcosta.composedestinations.DestinationsNavHost
