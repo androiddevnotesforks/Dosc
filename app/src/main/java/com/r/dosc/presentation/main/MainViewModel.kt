@@ -104,7 +104,6 @@ class MainViewModel @Inject constructor(
             is MainScreenEvents.LifecycleEvents -> {
                 setLifecycleEvent(events.lifecycleEvents)
             }
-
         }
     }
 

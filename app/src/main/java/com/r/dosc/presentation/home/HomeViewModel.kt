@@ -1,10 +1,12 @@
 package com.r.dosc.presentation.home
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.r.dosc.data.preference.PreferenceStorage
 import com.r.dosc.domain.models.PdfDocumentDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,39 +18,46 @@ import javax.inject.Named
 class HomeViewModel
 @Inject constructor(
     @Named("dosc") private val mainDirectory: File,
+    private val prefStorage: PreferenceStorage,
 ) : ViewModel() {
 
-    private val _listOfPdfDocuments = mutableStateListOf<PdfDocumentDetails>()
-    val listOfPdfDocuments = _listOfPdfDocuments
 
-    val dismissDropDown = mutableStateOf(false)
+    private val sortTypeId = MutableStateFlow(2)
+    private val listOfPdfDocuments = MutableStateFlow<List<PdfDocumentDetails>>(emptyList())
 
+    val listPdf = combine(listOfPdfDocuments, sortTypeId) { list, id ->
+        if (id == 1) {
+            list.sortedBy {
+                it.documentName
+            }
+        } else {
+            list.sortedByDescending {
+                it.timestamp
+            }
+        }
+
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     init {
+        viewModelScope.launch {
+            sortTypeId.value = prefStorage.sortTypeId.first()
+
+        }
         getAllPdfDocuments()
     }
 
-    fun onEvent(events: HomeScreenEvents) {
-        when (events) {
-            is HomeScreenEvents.DismissDropDown -> {
-                setDismissDropDown(events.dismiss)
-            }
-        }
-    }
-
-    private fun setDismissDropDown(open: Boolean) {
-        dismissDropDown.value = open
-    }
 
     fun deleteDocument(index: Int?) {
         if (index != null) {
-            val file = File("${_listOfPdfDocuments[index].filePath}")
+            val file = File("${listOfPdfDocuments.value[index].filePath}")
             file.deleteRecursively()
-            listOfPdfDocuments.removeAt(index)
+            updateDocList()
+
         }
     }
 
     private fun getAllPdfDocuments() {
+        val list = mutableListOf<PdfDocumentDetails>()
         mainDirectory.listFiles()?.forEach { file ->
             val pdfDocumentDetails = PdfDocumentDetails(
                 documentName = file.name,
@@ -56,17 +65,23 @@ class HomeViewModel
                 noOfPages = "",
                 docSize = getFileSize(file.length()),
                 dateCreated = getFileDate(file.lastModified()),
-                timestamp = 0L,
+                timestamp = file.lastModified(),
                 file = getPdfDocument(file.absolutePath)
             )
-            listOfPdfDocuments.add(pdfDocumentDetails)
+            list.add(pdfDocumentDetails)
+        }
+        viewModelScope.launch {
+            listOfPdfDocuments.emit(list)
         }
 
     }
 
     fun updateDocList() {
-        _listOfPdfDocuments.removeAll(_listOfPdfDocuments)
-        getAllPdfDocuments()
+        viewModelScope.launch {
+            listOfPdfDocuments.emit(emptyList())
+            getAllPdfDocuments()
+        }
+
     }
 
 
@@ -85,19 +100,5 @@ class HomeViewModel
     }
 
     private fun getPdfDocument(path: String?): File = File(path.toString())
-
-//    private fun getNoOfDocPages(file: File): String {
-//        return try {
-//            val pdfReader = PdfReader(file.absolutePath)
-//            pdfReader.numberOfPages.toString()
-//
-//        } catch (e: InvocationTargetException) {
-//            ""
-//        } catch (e: Exception) {
-//            ""
-//        }
-//
-//    }
-
 
 }

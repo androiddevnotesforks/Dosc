@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -60,9 +61,9 @@ fun HomeScreen(
         permissionViewModel = permissionViewModel,
         readPermissionState = readPermissionState,
         hasPermission = {
-            if (homeViewModel.listOfPdfDocuments.isNotEmpty()) {
+            if (homeViewModel.listPdf.collectAsState().value.isNotEmpty()) {
                 ShowPdfList(
-                    listOfPdfs = homeViewModel.listOfPdfDocuments,
+                    listOfPdfs = homeViewModel.listPdf.collectAsState().value,
                     openDocument = { doc, _ ->
                         navigator.navigate(
                             direction = PdfDocViewerDestination(
@@ -91,7 +92,7 @@ fun HomeScreen(
 
                             },
                             onDismissRequest = {
-                                homeViewModel.onEvent(HomeScreenEvents.DismissDropDown(true))
+
                             }
                         )
                     }

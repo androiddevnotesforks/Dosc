@@ -19,16 +19,25 @@ constructor(
 
 
     private object PreferencesKeys {
+        val SORT_TYPE_ID = intPreferencesKey("pref_sort_id")
         val IS_DARK_THEME = booleanPreferencesKey("pref_dark_theme")
         val IS_START_WITH_FILE_NAME = booleanPreferencesKey("pref_start_with_file_name")
 
     }
+
+    override val sortTypeId: Flow<Int>
+        get() = dataStore.getValueAsFlow(PreferencesKeys.SORT_TYPE_ID, 1)
 
     override val isDarkTheme: Flow<Boolean>
         get() = dataStore.getValueAsFlow(PreferencesKeys.IS_DARK_THEME, false)
 
     override val isStartWithFileName: Flow<Boolean>
         get() = dataStore.getValueAsFlow(PreferencesKeys.IS_START_WITH_FILE_NAME, true)
+
+    override suspend fun setSortId(sortId: Int) {
+        dataStore.setValue(PreferencesKeys.SORT_TYPE_ID, sortId)
+
+    }
 
     override suspend fun setIsDarkTheme(isDarkTheme: Boolean) {
         dataStore.setValue(PreferencesKeys.IS_DARK_THEME, isDarkTheme)
@@ -75,8 +84,11 @@ private fun <T> DataStore<Preferences>.getValueAsFlow(
 
 interface PreferenceStorage {
 
+    val sortTypeId: Flow<Int>
     val isDarkTheme: Flow<Boolean>
     val isStartWithFileName: Flow<Boolean>
+
+    suspend fun setSortId(sortId: Int)
 
     suspend fun setIsDarkTheme(isDarkTheme: Boolean)
 
