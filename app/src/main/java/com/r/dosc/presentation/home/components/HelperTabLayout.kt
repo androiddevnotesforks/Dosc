@@ -14,7 +14,10 @@ import com.r.dosc.domain.components.SortDropDownMenu
 import com.r.dosc.domain.ui.theme.Helper_Text_Color
 
 @Composable
-fun HelperTabLayout() {
+fun HelperTabLayout(
+    selectedId: Int,
+    onSortIdSelect: (Int) -> Unit
+) {
     var click by remember {
         mutableStateOf(false)
     }
@@ -53,17 +56,20 @@ fun HelperTabLayout() {
             if (click) {
                 SortDropDownMenu(
                     modifier = Modifier,
+                    selectedId = selectedId,
                     expanded = true,
                     onDismissRequest = {
                         click = false
 
                     },
                     onTitleSelect = {
+                        onSortIdSelect(1)
                         click = false
 
                     },
                     onDateSelect = {
                         click = false
+                        onSortIdSelect(2)
 
                     }
                 )

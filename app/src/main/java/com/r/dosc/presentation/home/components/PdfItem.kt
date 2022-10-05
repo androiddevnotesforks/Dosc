@@ -25,7 +25,7 @@ import java.io.File
 @Composable
 fun PdfItem(
     pdfDocumentDetails: PdfDocumentDetails,
-    onDelete: @Composable () -> Unit,
+    onDelete: @Composable (PdfDocumentDetails) -> Unit,
     onShare: (File) -> Unit,
     openDocument: (PdfDocumentDetails) -> Unit
 ) {
@@ -103,7 +103,7 @@ fun PdfItem(
 
                         },
                         onDelete = {
-                            onDelete()
+                            onDelete(pdfDocumentDetails)
                         },
                         onDismissRequest = {
                             showDropDown = false

@@ -18,11 +18,27 @@ val dropDownList = listOf(
 @Composable
 fun SortDropDownMenu(
     modifier: Modifier,
+    selectedId: Int,
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onTitleSelect: () -> Unit,
     onDateSelect: () -> Unit
 ) {
+
+    LaunchedEffect(true) {
+        when (selectedId){
+            1 -> {
+                dropDownList[0].isSelected = true
+                dropDownList[1].isSelected = false
+
+            }
+            2 -> {
+                dropDownList[0].isSelected = false
+                dropDownList[1].isSelected = true
+
+            }
+        }
+    }
 
     var isExpanded by remember {
         mutableStateOf(expanded)
@@ -66,17 +82,20 @@ fun SortDropDownMenu(
                 )
                 RadioButton(
                     modifier = Modifier.weight(1f),
-                    selected = item.isSelected,
+                    selected = item.id == selectedId,
                     onClick = {
                         when (item.id){
                             1 -> {
                                 dropDownList[0].isSelected = true
                                 dropDownList[1].isSelected = false
+                                onTitleSelect()
 
                             }
                             2 -> {
                                 dropDownList[0].isSelected = false
                                 dropDownList[1].isSelected = true
+                                onDateSelect()
+
                             }
                         }
                         isExpanded = false

@@ -22,7 +22,7 @@ class HomeViewModel
 ) : ViewModel() {
 
 
-    private val sortTypeId = MutableStateFlow(2)
+    val sortTypeId = MutableStateFlow(2)
     private val listOfPdfDocuments = MutableStateFlow<List<PdfDocumentDetails>>(emptyList())
 
     val listPdf = combine(listOfPdfDocuments, sortTypeId) { list, id ->
@@ -41,19 +41,22 @@ class HomeViewModel
     init {
         viewModelScope.launch {
             sortTypeId.value = prefStorage.sortTypeId.first()
-
         }
         getAllPdfDocuments()
     }
 
-
-    fun deleteDocument(index: Int?) {
-        if (index != null) {
-            val file = File("${listOfPdfDocuments.value[index].filePath}")
-            file.deleteRecursively()
-            updateDocList()
-
+    fun updateSortType(typeId: Int) {
+        viewModelScope.launch {
+            sortTypeId.emit(typeId)
+            prefStorage.setSortId(typeId)
         }
+    }
+
+
+    fun deleteDocument(pdfDoc: PdfDocumentDetails) {
+        val file = File("${pdfDoc.filePath}")
+        file.deleteRecursively()
+        updateDocList()
     }
 
     private fun getAllPdfDocuments() {

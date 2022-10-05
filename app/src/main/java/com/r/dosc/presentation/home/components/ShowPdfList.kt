@@ -13,16 +13,23 @@ import java.io.File
 
 @Composable
 fun ShowPdfList(
+    sortSelectedID: Int,
     listOfPdfs: List<PdfDocumentDetails>,
     openDocument: (PdfDocumentDetails, Int) -> Unit,
     onShare: (File) -> Unit,
-    onDelete: @Composable (Int) -> Unit
+    onDelete: @Composable (PdfDocumentDetails) -> Unit,
+    onSorIdSelected: (Int) -> Unit
 ) {
 
     Column(
         modifier = Modifier.padding(bottom = 56.dp)
     ) {
-        HelperTabLayout()
+        HelperTabLayout(
+            selectedId = sortSelectedID,
+            onSortIdSelect = { id ->
+                onSorIdSelected(id)
+            }
+        )
 
         LazyColumn {
             listOfPdfs.forEachIndexed { index, pdfDocumentDetails ->
@@ -30,7 +37,7 @@ fun ShowPdfList(
                     PdfItem(
                         pdfDocumentDetails = pdfDocumentDetails,
                         onDelete = {
-                            onDelete(index)
+                            onDelete(it)
                         },
                         onShare = { file ->
                             onShare(file)

@@ -63,6 +63,7 @@ fun HomeScreen(
         hasPermission = {
             if (homeViewModel.listPdf.collectAsState().value.isNotEmpty()) {
                 ShowPdfList(
+                    sortSelectedID = homeViewModel.sortTypeId.collectAsState().value,
                     listOfPdfs = homeViewModel.listPdf.collectAsState().value,
                     openDocument = { doc, _ ->
                         navigator.navigate(
@@ -85,17 +86,21 @@ fun HomeScreen(
                         context.startActivity(share)
 
                     },
-                    onDelete = { indx ->
+                    onDelete = { pdfDoc ->
                         DeleteDialogBox(
                             onDelete = {
-                                homeViewModel.deleteDocument(indx)
+                                homeViewModel.deleteDocument(pdfDoc)
 
                             },
                             onDismissRequest = {
 
                             }
                         )
+                    },
+                    onSorIdSelected = { id ->
+                        homeViewModel.updateSortType(id)
                     }
+
                 )
             } else {
                 OnEmptyState()

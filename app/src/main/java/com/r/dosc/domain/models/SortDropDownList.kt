@@ -5,6 +5,6 @@ sealed class SortDropDownList(
     val name: String,
     var isSelected: Boolean
 ) {
-    class Title : SortDropDownList(1,"Title", false)
-    class Date : SortDropDownList(2,"Date", true)
+    class Title : SortDropDownList(1,"Title", true)
+    class Date : SortDropDownList(2,"Date", false)
 }
