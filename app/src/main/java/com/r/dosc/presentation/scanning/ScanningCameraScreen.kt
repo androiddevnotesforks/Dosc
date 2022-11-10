@@ -31,6 +31,7 @@ import com.r.dosc.presentation.main.MainViewModel
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -62,6 +63,10 @@ fun ScanningCameraScreen(
 
     }
 
+    var isShowTopBar by remember {
+        mutableStateOf(false)
+    }
+
 
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
@@ -79,6 +84,10 @@ fun ScanningCameraScreen(
     })
 
     LaunchedEffect(true) {
+        launch {
+            delay(100L)
+            isShowTopBar = true
+        }
         launch {
             scanningViewModel.uiEvent.collect { uiEvent ->
                 when (uiEvent) {
@@ -116,14 +125,18 @@ fun ScanningCameraScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(animationSpec = tween(500)) + slideInVertically(),
+                    visible = isShowTopBar,
+                    enter = fadeIn(animationSpec = tween(300)) + expandVertically(
+                        animationSpec = tween(
+                            400,
+                            easing = { 1f })
+                    ),
                     exit = fadeOut(animationSpec = tween(100)) + slideOutVertically()
                 ) {
                     TopAppBar(title = {
                         Text(
                             text = title,
-                            fontSize = 30.sp,
+                            fontSize = 27.sp,
                             color = Color.White,
 
                             )
@@ -160,6 +173,7 @@ fun ScanningCameraScreen(
         ) {
 
             Column(
+                modifier = Modifier.padding(it),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //centre of scanning screen
@@ -188,7 +202,7 @@ fun ScanningCameraScreen(
                             CropImageView(
                                 bitmap = scanningViewModel.bitmapImage.collectAsState().value,
                                 imageEditDetails = scanningViewModel.imageEditDetails.collectAsState().value,
-                                onCropEdgesChange = {  offset1, offset2, offset3, offset4 ->
+                                onCropEdgesChange = { offset1, offset2, offset3, offset4 ->
 
                                     scanningViewModel.updateImageCropBound(
                                         indexSelectedImage.value,

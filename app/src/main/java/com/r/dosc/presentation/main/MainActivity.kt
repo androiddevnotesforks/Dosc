@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,6 +17,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
@@ -26,6 +28,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.r.dosc.R
 import com.r.dosc.domain.components.SetUpStatusBar
 import com.r.dosc.domain.navigation.BottomBar
 import com.r.dosc.domain.ui.theme.DarkColorPalette
@@ -33,12 +36,9 @@ import com.r.dosc.domain.ui.theme.DoscTheme
 import com.r.dosc.domain.util.PermissionViewModel
 import com.r.dosc.domain.util.showSnackBar
 import com.r.dosc.presentation.NavGraphs
-import com.r.dosc.presentation.destinations.HomeScreenDestination
-import com.r.dosc.presentation.destinations.PdfDocViewerDestination
-import com.r.dosc.presentation.destinations.ScanningCameraScreenDestination
-import com.r.dosc.presentation.destinations.SettingsScreenDestination
 import com.r.dosc.presentation.home.HomeViewModel
 import com.r.dosc.domain.components.DocumentNameDialogBox
+import com.r.dosc.presentation.destinations.*
 import com.r.dosc.presentation.main.components.ScanningFloatingButton
 import com.r.dosc.presentation.main.components.SetupPermissions
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -109,11 +109,29 @@ class MainActivity : ComponentActivity() {
                                     title = {
                                         Text(
                                             text = mainViewModel.topAppBarTitle.value,
-                                            fontSize = 30.sp,
+                                            fontSize = 27.sp,
                                             color = Color.White,
                                         )
                                     },
-                                    backgroundColor = topBarColor.value
+                                    backgroundColor = topBarColor.value,
+                                    actions = {
+                                        AnimatedVisibility(navBackStackEntry?.destination?.route == SettingsScreenDestination.route) {
+                                            IconButton(
+                                                modifier = Modifier.size(24.dp),
+                                                onClick = {
+                                                    navController.navigate(PrivacyPolicyScreenDestination)
+                                                }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_terms),
+                                                    contentDescription = "terms and conditions",
+                                                    tint = Color.White
+                                                )
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                    }
                                 )
                             }
                         },
@@ -159,6 +177,7 @@ class MainActivity : ComponentActivity() {
                     ) {
 
                         DestinationsNavHost(
+                            modifier = Modifier.padding(it),
                             navGraph = NavGraphs.root,
                             navController = navController,
                             dependenciesContainerBuilder = {

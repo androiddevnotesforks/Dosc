@@ -45,8 +45,7 @@ fun RowSwitch(
                 text = helperText,
                 color = Color.LightGray,
                 fontSize = 15.sp,
-
-                )
+            )
         }
 
         Box(

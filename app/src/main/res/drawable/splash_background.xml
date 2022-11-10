@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
 
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@android:color/black" />
 
     <item
         android:width="150dp"

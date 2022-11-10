@@ -116,6 +116,7 @@ fun PdfDocViewer(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = if(isSystemInDarkTheme() || isDarkTheme) Color.DarkGray else Color.LightGray,
         topBar = {
+
             TopAppBar(
                 title = {
                     Text(
@@ -224,7 +225,8 @@ fun PdfDocViewer(
         }
     ) {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(it),
             contentAlignment = Alignment.Center
         ) {
             val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()

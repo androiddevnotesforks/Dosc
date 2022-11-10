@@ -41,6 +41,7 @@ fun DocumentNameDialogBox(
 
                 Text(text = "")
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = text,
                     onValueChange = {
                         if (text.length < 25) {
