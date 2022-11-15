@@ -1,3 +1,11 @@
 # Dosc
 A practical implementation of Document Scanning and converting it into pdf format.<br>
 Android Clean Architecture used. With proper architecture design.
+
+Screenshots
+-----------------
+<p align="center">
+<img src="/assets/home_empty.jpg" width="32%"/>
+<img src="/images/home_list.jpg" width="32%"/>
+<img src="/images/settings.jpg" width="32%"/>
+</p>
