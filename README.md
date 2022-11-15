@@ -9,3 +9,8 @@ Screenshots
 <img src="/assets/home_list.png" width="32%"/>
 <img src="/assets/settings.png" width="32%"/>
 </p>
+
+## Available on Play store
+<p align="center">
+<img src="https://cdn.rawgit.com/steverichey/google-play-badge-svg/master/img/en_get.svg" width="50%">
+</p>
