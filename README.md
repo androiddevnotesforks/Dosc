@@ -6,6 +6,6 @@ Screenshots
 -----------------
 <p align="center">
 <img src="/assets/home_empty.jpg" width="32%"/>
-<img src="/images/home_list.jpg" width="32%"/>
-<img src="/images/settings.jpg" width="32%"/>
+<img src="/assets/home_list.jpg" width="32%"/>
+<img src="/assets/settings.jpg" width="32%"/>
 </p>
