@@ -32,8 +32,8 @@ fun DocCreatingDialog() {
 
     val transparentGradientBrush = Brush.linearGradient(
         colors = listOf(
-            Color(0x66FFFFFF),
-            Color(0x1AFFFFFF)
+            Color(0xBFFFFFFF),
+            Color(0x66FFFFFF)
         )
     )
 

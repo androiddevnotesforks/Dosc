@@ -86,7 +86,15 @@ class CropUtil constructor(bitmap: Bitmap) {
             imgTop = abs(mHeight - imgHeight)
         }
 
-        val cropBitmap =
+        val cropBitmap = if (imgWidth <= 0 || imgHeight <= 0){
+            Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                mWidth,
+                mHeight
+            )
+        } else {
             Bitmap.createBitmap(
                 bitmap,
                 imgLef,
@@ -94,6 +102,16 @@ class CropUtil constructor(bitmap: Bitmap) {
                 imgWidth,
                 imgHeight
             )
+        }
+
+//        val cropBitmap =
+//            Bitmap.createBitmap(
+//                bitmap,
+//                imgLef,
+//                imgTop,
+//                imgWidth,
+//                imgHeight
+//            )
 
 
         return Bitmap.createScaledBitmap(cropBitmap, mWidth, mHeight, true)
@@ -132,7 +150,8 @@ class CropUtil constructor(bitmap: Bitmap) {
         val diffX = abs(circleTwo.x - offset.x)
         val diffY = abs(circleThree.y - offset.y)
 
-        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges && offset.y < circleThree.y && offset.x < circleTwo.x) {
+
 
             this.circleOne = offset
             this.circleTwo = Offset(circleTwo.x, offset.y)
@@ -149,7 +168,8 @@ class CropUtil constructor(bitmap: Bitmap) {
         val diffX = abs(offset.x - circleOne.x)
         val diffY = abs(circleFour.y - offset.y)
 
-        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges && offset.y < circleFour.y && offset.x > circleOne.x) {
+
             this.circleTwo = offset
             this.circleOne = Offset(circleOne.x, offset.y)
             this.circleFour = Offset(offset.x, circleFour.y)
@@ -163,7 +183,9 @@ class CropUtil constructor(bitmap: Bitmap) {
     fun updateCircleThree(offset: Offset) {
         val diffX = abs(offset.x - circleFour.x)
         val diffY = abs(circleOne.y - offset.y)
-        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges && offset.y > circleOne.y && offset.x < circleFour.x) {
+
             this.circleThree = offset
             this.circleOne = Offset(offset.x, circleOne.y)
             this.circleFour = Offset(circleFour.x, offset.y)
@@ -179,7 +201,8 @@ class CropUtil constructor(bitmap: Bitmap) {
         val diffX = abs(offset.x - circleThree.x)
         val diffY = abs(circleTwo.y - offset.y)
 
-        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges) {
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges && offset.y > circleTwo.y && offset.x > circleThree.x) {
+
             this.circleFour = offset
             this.circleTwo = Offset(offset.x, circleTwo.y)
             this.circleThree = Offset(circleThree.x, offset.y)
@@ -188,6 +211,68 @@ class CropUtil constructor(bitmap: Bitmap) {
             updateGuideLineThree()
             updateGuideLineFour()
         }
+    }
+
+    fun moveLineOne(offset: Offset) {
+        val diffX = abs(offset.x - circleThree.x)
+        val diffY = abs(circleFour.y - offset.y)
+
+        if (diffX >= widthDiffInEdges && diffY > heightDiffInEdges && offset.y <= circleThree.y) {
+            this.circleOne = Offset(circleOne.x, offset.y)
+            this.circleTwo = Offset(circleTwo.x, offset.y)
+
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
+
+    }
+
+    fun moveLineTwo(offset: Offset) {
+        val diffX = abs(offset.x - circleTwo.x)
+
+        if (diffX >= widthDiffInEdges  && offset.x <= circleTwo.x) {
+            this.circleOne = Offset(offset.x, circleOne.y)
+            this.circleThree = Offset(offset.x, circleThree.y)
+
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
+
+
+    }
+
+    fun moveLineThree(offset: Offset) {
+        val diffX = abs(offset.x - circleOne.x)
+
+        if (diffX >= widthDiffInEdges  && offset.x > circleOne.x) {
+            this.circleTwo = Offset(offset.x, circleTwo.y)
+            this.circleFour = Offset(offset.x, circleFour.y)
+
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
+
+    }
+
+    fun moveLineFour(offset: Offset) {
+        val diffY = abs(offset.y - circleOne.y)
+
+        if (diffY > heightDiffInEdges && offset.y > circleOne.y) {
+            this.circleFour = Offset(circleFour.x, offset.y)
+            this.circleThree = Offset(circleThree.x, offset.y)
+
+            updateGuideLineOne()
+            updateGuideLineTwo()
+            updateGuideLineThree()
+            updateGuideLineFour()
+        }
+
     }
 
     private fun updateGuideLineOne() {

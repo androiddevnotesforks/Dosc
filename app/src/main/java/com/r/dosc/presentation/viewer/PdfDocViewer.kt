@@ -219,8 +219,12 @@ fun PdfDocViewer(
                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
 
             ) {
-                Text(text = "$pageCountText/$pageCount", fontSize = 15.sp)
+                if (pageCount <= 1){
+                    Text(text = "1/$pageCount", fontSize = 15.sp)
 
+                } else {
+                    Text(text = "$pageCountText/$pageCount", fontSize = 15.sp)
+                }
             }
         }
     ) {

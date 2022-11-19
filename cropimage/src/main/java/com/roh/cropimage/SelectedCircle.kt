@@ -5,5 +5,9 @@ enum class SelectedCircle {
     ONE,
     TWO,
     THREE,
-    FOUR
+    FOUR,
+    LINEONE,
+    LINETWO,
+    LINETHREE,
+    LINEFOUR
 }

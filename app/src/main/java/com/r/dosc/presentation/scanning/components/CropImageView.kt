@@ -1,23 +1,19 @@
 package com.r.dosc.presentation.scanning.components
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
-import coil.compose.AsyncImage
 import com.r.dosc.domain.models.ImageEditDetails
-import com.r.dosc.presentation.scanning.ScanningViewModel
-import com.roh.cropimage.CropUtil
 import com.roh.cropimage.InItCropView
 
 @Composable
@@ -83,7 +79,6 @@ fun CropImageView(
             }
 
         }
-
 
     }
 

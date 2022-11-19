@@ -13,6 +13,7 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 
 
 class InItCropView(
@@ -36,7 +37,7 @@ class InItCropView(
         onDragStart: () -> Unit = { },
         onCropEdgesChange: (Offset, Offset, Offset, Offset) -> Unit,
 
-    ) {
+        ) {
 
         var selectedCircle by remember { mutableStateOf(SelectedCircle.NULL) }
         val cropUtil by remember { mutableStateOf(CropUtil(mBitmap)) }
@@ -85,6 +86,22 @@ class InItCropView(
                             ) {
                                 selectedCircle = SelectedCircle.FOUR
 
+                            } else if (abs(it.y - cropUtil.circleOne.y) < circleTouchArea) {
+
+                                selectedCircle = SelectedCircle.LINEONE
+
+                            } else if (abs(it.x - cropUtil.circleOne.x) < circleTouchArea) {
+
+                                selectedCircle = SelectedCircle.LINETWO
+
+                            } else if (abs(it.x - cropUtil.circleTwo.x) < circleTouchArea) {
+
+                                selectedCircle = SelectedCircle.LINETHREE
+
+                            } else if (abs(it.y - cropUtil.circleThree.y) < circleTouchArea) {
+
+                                selectedCircle = SelectedCircle.LINEFOUR
+
                             } else {
                                 selectedCircle = SelectedCircle.NULL
                             }
@@ -98,7 +115,6 @@ class InItCropView(
                                     SelectedCircle.ONE -> {
                                         val offsetChanged =
                                             Offset(change.position.x, change.position.y)
-                                        println("rohit here edge one is selected => $offsetChanged")
                                         cropUtil.updateCircleOne(offsetChanged)
 
 
@@ -122,6 +138,38 @@ class InItCropView(
                                         cropUtil.updateCircleFour(offsetChanged)
 
 
+                                    }
+                                    SelectedCircle.LINEONE -> {
+                                        cropUtil.moveLineOne(
+                                            Offset(
+                                                change.position.x,
+                                                change.position.y
+                                            )
+                                        )
+                                    }
+                                    SelectedCircle.LINETWO -> {
+                                        cropUtil.moveLineTwo(
+                                            Offset(
+                                                change.position.x,
+                                                change.position.y
+                                            )
+                                        )
+                                    }
+                                    SelectedCircle.LINETHREE -> {
+                                        cropUtil.moveLineThree(
+                                            Offset(
+                                                change.position.x,
+                                                change.position.y
+                                            )
+                                        )
+                                    }
+                                    SelectedCircle.LINEFOUR -> {
+                                        cropUtil.moveLineFour(
+                                            Offset(
+                                                change.position.x,
+                                                change.position.y
+                                            )
+                                        )
                                     }
                                     else -> Unit
                                 }
@@ -253,7 +301,6 @@ class InItCropView(
             }
         )
     }
-
 
 
     override fun resetView() {

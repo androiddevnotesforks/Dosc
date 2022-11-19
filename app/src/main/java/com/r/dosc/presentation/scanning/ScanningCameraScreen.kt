@@ -1,5 +1,6 @@
 package com.r.dosc.presentation.scanning
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import com.r.dosc.domain.ui.theme.DarkColorPalette
 import com.r.dosc.domain.ui.theme.DoscTheme
 import com.r.dosc.domain.ui.theme.Ocean_Red_2
 import com.r.dosc.presentation.main.MainViewModel
+import com.r.dosc.presentation.main.components.WarningDialog
 import com.r.dosc.presentation.scanning.components.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -58,12 +60,17 @@ fun ScanningCameraScreen(
     val context = LocalContext.current
 
     val indexSelectedImage = remember { mutableStateOf(0) }
+
     var isSelected by remember {
         mutableStateOf(false)
 
     }
 
     var isShowTopBar by remember {
+        mutableStateOf(false)
+    }
+
+    var showWarningDialog by remember {
         mutableStateOf(false)
     }
 
@@ -96,7 +103,6 @@ fun ScanningCameraScreen(
                         indexSelectedImage.value = uiEvent.indx
                         isSelected = true
 
-
                     }
                     else -> {
                         isSelected = false
@@ -117,6 +123,28 @@ fun ScanningCameraScreen(
 
     if (scanningViewModel.showDialog.collectAsState().value) {
         DocCreatingDialog()
+    }
+
+    if (showWarningDialog) {
+        WarningDialog(
+            onOkay = {
+                navigator.navigateUp()
+
+            }
+        ) {
+            showWarningDialog = false
+        }
+    }
+
+    BackHandler {
+        if (scanningViewModel.isDocumentPreviewMode.value){
+            scanningViewModel.onEvent(ScanningScreenEvents.CameraScreen)
+
+        } else if (scanningViewModel.listOfImages.isNotEmpty()) {
+            showWarningDialog = true
+        } else {
+            navigator.navigateUp()
+        }
     }
 
     DoscTheme(darkTheme = true) {
@@ -141,10 +169,16 @@ fun ScanningCameraScreen(
 
                             )
                     }, navigationIcon = {
-                        IconButton(onClick = {
-                            navigator.navigateUp()
+                        IconButton(
+                            onClick = {
+                                if (scanningViewModel.listOfImages.isNotEmpty()) {
+                                    showWarningDialog = true
+                                } else {
+                                    navigator.navigateUp()
 
-                        }) {
+                                }
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Close, contentDescription = "close"
                             )

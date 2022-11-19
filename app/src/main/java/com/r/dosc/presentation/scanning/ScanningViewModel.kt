@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
@@ -50,7 +49,7 @@ class ScanningViewModel
     var docName = ""
 
     val listOfImages = mutableStateListOf<Uri>()
-    val listOfImageBitmaps = arrayListOf<ImageEditDetails>()
+    private val listOfImageBitmaps = arrayListOf<ImageEditDetails>()
 
     var canvasWidth: Int by mutableStateOf(0)
     var canvasHeight: Int by mutableStateOf(0)
