@@ -130,7 +130,7 @@ class ScanningViewModel
         viewModelScope.launch {
 
             val creatingPdf = async {
-                listOfImageBitmaps.forEachIndexed { index, imFile ->
+                listOfImageBitmaps.forEachIndexed { _, imFile ->
                     count++
 
                     if (imFile.isEdited) {

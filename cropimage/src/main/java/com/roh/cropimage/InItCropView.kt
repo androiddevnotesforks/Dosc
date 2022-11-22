@@ -315,7 +315,6 @@ class InItCropView(
     ) {
         cropU.updateCropEdges(circleOne, circleTwo, circleThree, circleFour)
 
-
     }
 
 }
