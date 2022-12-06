@@ -63,7 +63,6 @@ object ScanningModule {
         CampImp(appContext)
 
 
-
     @Singleton
     @Provides
     fun provideScanningEssential(
@@ -83,7 +82,6 @@ object ViewModelModule {
     fun provideDocument(): Document = Document()
 
 }
-
 
 class CampImp(private val appContext: Context) : CamX {
 

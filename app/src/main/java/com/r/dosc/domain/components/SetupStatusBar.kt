@@ -21,7 +21,7 @@ fun SetUpStatusBar(
 ) {
     if (viewModel.isDarkThemeState.value) {
         systemUiController.setStatusBarColor(
-            color = MaterialTheme.colors.primarySurface
+            color = Ocean_Red
         )
         systemUiController.setNavigationBarColor(
             color = MaterialTheme.colors.primarySurface
@@ -53,7 +53,7 @@ fun SetUpStatusBar(
     if (updateStatusBar && viewModel.lifecycleEvent.value == Lifecycle.Event.ON_START) {
         if (viewModel.isDarkThemeState.value) {
             systemUiController.setStatusBarColor(
-                color = MaterialTheme.colors.primarySurface
+                color = Ocean_Red
             )
             systemUiController.setNavigationBarColor(
                 color = MaterialTheme.colors.surface

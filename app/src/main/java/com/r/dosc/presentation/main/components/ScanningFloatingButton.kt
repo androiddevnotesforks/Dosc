@@ -30,8 +30,8 @@ fun ScanningFloatingButton(
         onClick = {
             when (permissionViewModel.permissionsCamera.value) {
                 Permissions.HAS_PERMISSION -> {
-                    if (permissionViewModel.isStorageReadGranted.value &&
-                        permissionViewModel.isStorageWriteGranted.value
+                    if (!permissionViewModel.isStorageReadGranted.value &&
+                        !permissionViewModel.isStorageWriteGranted.value
                     ) {
                         //Open Camera
                         if (mainViewModel.isStartWithFileNameState.value) {
@@ -51,7 +51,7 @@ fun ScanningFloatingButton(
 
                         mainViewModel.onEvent(
                             MainScreenEvents.ShowSnackBar(
-                                "Storage permission is needed. Enable it form app settings.",
+                                "Storage permission is needed. Enable it from app settings.",
                             )
                         )
                     }
@@ -62,7 +62,7 @@ fun ScanningFloatingButton(
                 Permissions.IS_PERMANENTLY_DENIED -> {
                     mainViewModel.onEvent(
                         MainScreenEvents.ShowSnackBar(
-                            "Camera permission is needed." + " Enable it form app settings."
+                            "Camera permission is needed." + " Enable it from app settings."
                         )
                     )
                 }
