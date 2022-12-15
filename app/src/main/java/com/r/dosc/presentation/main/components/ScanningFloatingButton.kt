@@ -1,5 +1,6 @@
 package com.r.dosc.presentation.main.components
 
+import android.os.Build
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -30,8 +31,8 @@ fun ScanningFloatingButton(
         onClick = {
             when (permissionViewModel.permissionsCamera.value) {
                 Permissions.HAS_PERMISSION -> {
-                    if (!permissionViewModel.isStorageReadGranted.value &&
-                        !permissionViewModel.isStorageWriteGranted.value
+                    if (permissionViewModel.isStorageReadGranted.value &&
+                        permissionViewModel.isStorageWriteGranted.value
                     ) {
                         //Open Camera
                         if (mainViewModel.isStartWithFileNameState.value) {
@@ -46,14 +47,17 @@ fun ScanningFloatingButton(
                             onClick()
                         }
 
-
                     } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            onClick()
+                        } else {
 
-                        mainViewModel.onEvent(
-                            MainScreenEvents.ShowSnackBar(
-                                "Storage permission is needed. Enable it from app settings.",
+                            mainViewModel.onEvent(
+                                MainScreenEvents.ShowSnackBar(
+                                    "Storage permission is needed. Enable it from app settings..",
+                                )
                             )
-                        )
+                        }
                     }
                 }
                 Permissions.SHOULD_SHOW_RATIONAL -> {
@@ -62,7 +66,7 @@ fun ScanningFloatingButton(
                 Permissions.IS_PERMANENTLY_DENIED -> {
                     mainViewModel.onEvent(
                         MainScreenEvents.ShowSnackBar(
-                            "Camera permission is needed." + " Enable it from app settings."
+                            "Camera permission is needed. Enable it from app settings."
                         )
                     )
                 }
