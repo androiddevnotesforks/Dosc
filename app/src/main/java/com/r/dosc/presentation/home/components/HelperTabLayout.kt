@@ -74,10 +74,6 @@ fun HelperTabLayout(
                     }
                 )
             }
-
         }
     }
-
-
-
 }

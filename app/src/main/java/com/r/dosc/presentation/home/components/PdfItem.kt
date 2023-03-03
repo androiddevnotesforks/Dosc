@@ -21,7 +21,6 @@ import com.r.dosc.domain.models.PdfDocumentDetails
 import com.r.dosc.domain.ui.theme.GrayShade_dark
 import java.io.File
 
-
 @Composable
 fun PdfItem(
     pdfDocumentDetails: PdfDocumentDetails,
@@ -33,7 +32,6 @@ fun PdfItem(
     var showDropDown by remember {
         mutableStateOf(false)
     }
-
 
     Row(
         modifier = Modifier

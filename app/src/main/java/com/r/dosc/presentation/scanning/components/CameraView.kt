@@ -60,7 +60,7 @@ fun CameraView(
             )
 
         } catch (e: Exception) {
-            //handle error todo
+            //handle error
         }
 
         scanningViewModel.captureImage.collectLatest { click ->
@@ -122,7 +122,7 @@ private fun takePhoto(
             override fun onError(exception: ImageCaptureException) {
                 onError(exception)
             }
-        })
-
+        }
+    )
 }
 

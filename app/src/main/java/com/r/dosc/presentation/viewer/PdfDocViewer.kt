@@ -111,7 +111,6 @@ fun PdfDocViewer(
         }
     }
 
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         backgroundColor = if(isSystemInDarkTheme() || isDarkTheme) Color.DarkGray else Color.LightGray,

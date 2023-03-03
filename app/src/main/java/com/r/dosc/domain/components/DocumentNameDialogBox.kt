@@ -33,7 +33,6 @@ fun DocumentNameDialogBox(
             )
 
         },
-
         text = {
             Column(
                 verticalArrangement = Arrangement.Center
@@ -46,7 +45,6 @@ fun DocumentNameDialogBox(
                     onValueChange = {
                         if (text.length < 25) {
                             text = it
-
                         }
                     },
                     singleLine = true,
@@ -102,8 +100,6 @@ fun DocumentNameDialogBox(
                     Text(text = "Start", color = Color.White, fontSize = 16.sp)
                 }
             }
-
         }
-
     )
 }

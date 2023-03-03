@@ -41,7 +41,6 @@ fun SettingsScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             elevation = 3.dp
-
         ) {
             Column(
                 modifier = Modifier.padding(12.dp),
@@ -77,7 +76,6 @@ fun SettingsScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-
 
             }
 

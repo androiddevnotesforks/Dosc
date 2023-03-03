@@ -58,7 +58,6 @@ fun DocCreatingDialog() {
                     progress = { progress }
                 )
 
-
                 Text(
                     text = "Creating Document",
                     color = Dark_1,
@@ -66,6 +65,7 @@ fun DocCreatingDialog() {
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.sp
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
             }

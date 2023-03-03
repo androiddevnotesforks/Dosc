@@ -17,7 +17,6 @@ fun TextItem(
     title: String,
     description: String
 ) {
-    
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 24.dp),
     ) {
@@ -37,5 +36,4 @@ fun TextItem(
             letterSpacing = 0.5.sp
         )
     }
-
 }

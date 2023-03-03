@@ -81,7 +81,6 @@ fun PrivacyPolicyScreen(
             }
         }
     ) {
-
         LazyColumn(
             modifier = Modifier.padding(it)
         ) {
@@ -91,8 +90,6 @@ fun PrivacyPolicyScreen(
                 }
             }
         }
-
-
     }
 
 }

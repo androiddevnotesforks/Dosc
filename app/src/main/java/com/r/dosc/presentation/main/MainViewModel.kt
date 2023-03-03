@@ -144,6 +144,4 @@ class MainViewModel @Inject constructor(
             _updateDocList.emit(isUpdate)
         }
     }
-
-
 }

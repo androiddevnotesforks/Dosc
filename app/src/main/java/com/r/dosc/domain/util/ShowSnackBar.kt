@@ -10,7 +10,6 @@ fun showSnackBar(
     coroutineScope: CoroutineScope,
 ) {
     coroutineScope.launch {
-
         scaffoldState.snackbarHostState.showSnackbar(
             message = message
         )

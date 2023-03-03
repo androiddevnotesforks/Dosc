@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
                 SetupPermissions(permissionViewModel)
                 val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
-
                 val navController = rememberAnimatedNavController()
                 val scaffoldState = rememberScaffoldState()
                 val coroutineScope = rememberCoroutineScope()
@@ -87,7 +86,6 @@ class MainActivity : ComponentActivity() {
                         Color.Black
                     }
                 )
-
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -169,7 +167,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
-
                         },
                         floatingActionButtonPosition = FabPosition.Center,
                         isFloatingActionButtonDocked = true,
@@ -245,7 +242,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 @ExperimentalPermissionsApi

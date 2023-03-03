@@ -21,7 +21,6 @@ class HomeViewModel
     private val prefStorage: PreferenceStorage,
 ) : ViewModel() {
 
-
     val sortTypeId = MutableStateFlow(2)
     private val listOfPdfDocuments = MutableStateFlow<List<PdfDocumentDetails>>(emptyList())
 
@@ -51,7 +50,6 @@ class HomeViewModel
             prefStorage.setSortId(typeId)
         }
     }
-
 
     fun deleteDocument(pdfDoc: PdfDocumentDetails) {
         val file = File("${pdfDoc.filePath}")
@@ -86,7 +84,6 @@ class HomeViewModel
         }
 
     }
-
 
     private fun getFileSize(length: Long): String {
         val size = (length / 1024)

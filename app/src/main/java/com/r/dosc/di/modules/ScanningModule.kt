@@ -86,7 +86,7 @@ object ViewModelModule {
 class CampImp(private val appContext: Context) : CamX {
 
     override suspend fun getCameraProvider(): ProcessCameraProvider =
-        suspendCoroutine() { cont ->
+        suspendCoroutine { cont ->
             ProcessCameraProvider.getInstance(appContext).also { cameraPr ->
                 cameraPr.addListener({
                     cont.resume(cameraPr.get())

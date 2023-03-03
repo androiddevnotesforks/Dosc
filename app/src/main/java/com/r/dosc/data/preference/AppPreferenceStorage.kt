@@ -9,14 +9,12 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class AppPreferenceStorage
 @Inject
 constructor(
     private val dataStore: DataStore<Preferences>
 ) : PreferenceStorage {
-
 
     private object PreferencesKeys {
         val SORT_TYPE_ID = intPreferencesKey("pref_sort_id")
@@ -64,13 +62,11 @@ private suspend fun <T> DataStore<Preferences>.setValue(
     }
 }
 
-
 private fun <T> DataStore<Preferences>.getValueAsFlow(
     key: Preferences.Key<T>,
     defaultValue: T
 ): Flow<T> {
     return this.data.catch { exception ->
-
         if (exception is IOException) {
             emit(emptyPreferences())
         } else {

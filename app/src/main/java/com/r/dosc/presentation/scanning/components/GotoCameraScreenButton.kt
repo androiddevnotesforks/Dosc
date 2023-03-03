@@ -50,7 +50,6 @@ fun GotoCameraScreenButton(
                     tint = color
                 )
             }
-
         }
     }
 

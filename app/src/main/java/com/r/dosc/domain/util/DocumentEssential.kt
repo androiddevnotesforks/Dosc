@@ -1,7 +1,6 @@
 package com.r.dosc.domain.util
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.core.net.toFile
 import com.itextpdf.text.Document
@@ -21,7 +20,6 @@ constructor(
     private val context: Context,
     @Named("temp") private val tempDirectory: File,
 ) {
-
     fun pdfWriter(iDocument: Document, fileName: String): PdfWriter =
         PdfWriter.getInstance(
             iDocument,
@@ -29,7 +27,6 @@ constructor(
         )
 
     suspend fun compressImage(count: Int, imgFileUri: Uri): String {
-        println("rohit image path 1 => $imgFileUri")
 
         val photoOutputTempFile = File(
             tempDirectory,
@@ -43,9 +40,6 @@ constructor(
                 default()
                 destination(photoOutputTempFile)
             }
-
-        println("rohit image path 2 => ${compressedImageFile.absolutePath}")
-
 
         return compressedImageFile.absolutePath
 

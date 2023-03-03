@@ -51,8 +51,8 @@ class ScanningViewModel
     val listOfImages = mutableStateListOf<Uri>()
     private val listOfImageBitmaps = arrayListOf<ImageEditDetails>()
 
-    var canvasWidth: Int by mutableStateOf(0)
-    var canvasHeight: Int by mutableStateOf(0)
+    private var canvasWidth: Int by mutableStateOf(0)
+    private var canvasHeight: Int by mutableStateOf(0)
 
     private val _uiEvent = MutableStateFlow<ScanningScreenEvents>(ScanningScreenEvents.CameraScreen)
     val uiEvent = _uiEvent

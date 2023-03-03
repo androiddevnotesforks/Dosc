@@ -27,7 +27,6 @@ fun LazyListState.pageIndexHorizontal(): String {
 fun LazyListState.isScrolledToEnd() =
     layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 
-
 //get document uri to share
 fun File.getPdfUri(context: Context): Uri = FileProvider.getUriForFile(
     context,

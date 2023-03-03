@@ -52,8 +52,6 @@ fun DropDownMenu(
                             onDeleteClicked = true
                         }
                     }
-
-
                 },
             ) {
                 Text(text = item.name)

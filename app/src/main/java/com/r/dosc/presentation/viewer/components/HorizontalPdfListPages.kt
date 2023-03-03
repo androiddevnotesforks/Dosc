@@ -46,7 +46,6 @@ fun HorizontalPdfListPages(
     renderer: PdfRenderer?
 ) {
 
-
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         state = docListState,
@@ -115,5 +114,4 @@ fun HorizontalPdfListPages(
             }
         }
     }
-
 }

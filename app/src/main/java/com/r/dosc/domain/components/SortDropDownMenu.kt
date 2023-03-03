@@ -73,7 +73,6 @@ fun SortDropDownMenu(
                             false
                         }
                     }
-
                 }
             ) {
                 Text(
@@ -103,10 +102,7 @@ fun SortDropDownMenu(
                     }
                 )
             }
-
         }
-
     }
-
 
 }

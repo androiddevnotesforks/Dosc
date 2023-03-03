@@ -60,6 +60,7 @@ fun BottomBar(
 
                             restoreState = true
                         })
+
                     },
                     icon = {
                         NavigationItemIcon(
@@ -72,10 +73,7 @@ fun BottomBar(
                 )
             }
         }
-
     }
-
-
 }
 
 @Composable
@@ -111,10 +109,9 @@ private fun NavigationItemIcon(destination: BottomBarDestination, selected: Bool
                         radius = 15f,
                     )
                 }
-
             }
-
         }
+
     } else {
         Box(
             modifier = Modifier
@@ -123,22 +120,18 @@ private fun NavigationItemIcon(destination: BottomBarDestination, selected: Bool
                 .padding(top = 5.dp),
             contentAlignment = Alignment.Center
 
-
         ) {
             Text(
                 text = destination.title,
                 fontSize = 16.sp
             )
-
         }
     }
-
 }
 
 object ClearRippleTheme : RippleTheme {
     @Composable
     override fun defaultColor(): Color = Color.Transparent
-
     @Composable
     override fun rippleAlpha() = RippleAlpha(
         draggedAlpha = 0.0f,

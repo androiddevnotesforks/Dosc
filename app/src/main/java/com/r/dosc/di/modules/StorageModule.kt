@@ -22,7 +22,6 @@ import javax.inject.Singleton
 
 private const val SETTINGS_PREFERENCE = "setting_preference"
 
-
 @InstallIn(SingletonComponent::class)
 @Module
 object StorageModule {
@@ -39,14 +38,11 @@ object StorageModule {
         )
     }
 
-
-
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class StoragePrefModule {
-
     @Binds
     abstract fun providePreferenceStorage(
         appPreferenceStorage: AppPreferenceStorage

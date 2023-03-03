@@ -84,11 +84,7 @@ fun WarningDialog(
                         Text(text = "Discard", color = Color.White, fontSize = 16.sp)
                     }
                 }
-
             }
-
         )
     }
-
-
 }

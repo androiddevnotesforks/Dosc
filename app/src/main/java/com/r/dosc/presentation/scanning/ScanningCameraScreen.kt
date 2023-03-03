@@ -74,7 +74,6 @@ fun ScanningCameraScreen(
         mutableStateOf(false)
     }
 
-
     DisposableEffect(key1 = lifecycleOwner, effect = {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START || event == Lifecycle.Event.ON_RESUME) {
@@ -247,8 +246,8 @@ fun ScanningCameraScreen(
                                     )
                                 },
                                 indexSelectedImage = indexSelectedImage.value,
-                                cropRectSize = {
-                                    scanningViewModel.updateCropRectSize(it.width, it.height)
+                                cropRectSize = {intSize ->
+                                    scanningViewModel.updateCropRectSize(intSize.width, intSize.height)
                                 }
                             )
                         }
@@ -299,10 +298,10 @@ fun ScanningCameraScreen(
                                             )
 
                                         },
-                                        removeImage = { indx ->
+                                        removeImage = { index ->
                                             scanningViewModel.onEvent(
                                                 ScanningScreenEvents.RemoveImage(
-                                                    indx
+                                                    index
                                                 )
                                             )
                                         })

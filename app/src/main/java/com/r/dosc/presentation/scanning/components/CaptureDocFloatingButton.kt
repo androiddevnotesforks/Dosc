@@ -40,9 +40,9 @@ fun CaptureDocFloatingButton(
                 .size(250.dp, 250.dp)
                 .clickable {
                     scanningViewModel.clickImage(true)
-
                 },
-        )
+
+            )
     }
 }
 

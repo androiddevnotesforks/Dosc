@@ -25,7 +25,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-
 @ExperimentalPermissionsApi
 @RootNavGraph(start = true)
 @Destination
@@ -117,8 +116,6 @@ fun HomeScreen(
         }
         else -> Unit
     }
-
-
 }
 
 

@@ -81,9 +81,7 @@ fun DeleteDialogBox(
                         Text(text = "Delete", color = Color.White, fontSize = 16.sp)
                     }
                 }
-
             }
         )
     }
-
 }
